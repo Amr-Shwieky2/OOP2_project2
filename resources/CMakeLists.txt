@@ -1,0 +1,30 @@
+﻿configure_file ("./images/newChoose.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./images/newHelp.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./images/highSccores.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./images/newMenu.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./images/setting.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./images/background.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./images/chooseCharacters1.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./images/chooseCharacters2.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./images/pause.jpg" ${CMAKE_BINARY_DIR} COPYONLY)
+
+
+configure_file ("./icons/bat.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/dark.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/dark-wing.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/dinasor-wing.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/dinasor.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/heart.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/hole.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/sharp.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/sharp-wing.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/startfromthestart.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/trampoline.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/wings.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/witch.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/witch-wing.png" ${CMAKE_BINARY_DIR} COPYONLY)
+
+
+configure_file ("./fonts/arial.ttf" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("highScore.txt" ${CMAKE_BINARY_DIR} COPYONLY)
+
