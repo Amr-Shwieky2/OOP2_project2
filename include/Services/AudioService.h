@@ -17,6 +17,9 @@ public:
     // Get the sole instance of AudioService
     static AudioService& instance();
 
+    ~AudioService();
+
+
     // Delete copy/move so no duplicates
     AudioService(const AudioService&) = delete;
     AudioService& operator=(const AudioService&) = delete;
@@ -46,7 +49,6 @@ public:
 
 private:
     AudioService();   // private ctor
-    ~AudioService();
 
     // Internal helper to check if a soundId exists
     bool hasSound(const std::string& soundId) const;

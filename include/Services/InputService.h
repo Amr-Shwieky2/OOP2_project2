@@ -30,6 +30,8 @@ public:
     InputService& operator=(const InputService&) = delete;
     InputService(InputService&&) = delete;
     InputService& operator=(InputService&&) = delete;
+    ~InputService() = default;
+
 
     /**
      * Must be called once per frame, before any calls to isKeyDown/wasKeyPressed/etc.
@@ -89,7 +91,6 @@ public:
 
 private:
     InputService();
-    ~InputService() = default;
 
     // Internal sets to track current and “just changed” keys/buttons:
     std::unordered_set<sf::Keyboard::Key> m_keysDown;            // keys currently held

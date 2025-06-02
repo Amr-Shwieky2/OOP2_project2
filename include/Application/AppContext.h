@@ -3,13 +3,13 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 #include <box2d/box2d.h>
+#include "RandomService.h"
+// Include each service’s header here (so we can construct them)
+#include "ScreenManager.h"
+#include "AudioService.h"
+#include "ResourceLoader.h"
+#include "InputService.h"
 
-// Forward declarations of all service classes
-class ScreenManager;
-class AudioService;
-class ResourceLoader;
-class InputService;
-class RandomService;
 
 ///
 /// AppContext

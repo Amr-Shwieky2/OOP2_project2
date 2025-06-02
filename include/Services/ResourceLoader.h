@@ -27,6 +27,8 @@ public:
     ResourceLoader& operator=(const ResourceLoader&) = delete;
     ResourceLoader(ResourceLoader&&) = delete;
     ResourceLoader& operator=(ResourceLoader&&) = delete;
+    ~ResourceLoader() = default;
+
 
     // Load a texture from file and associate it with the given key.
     // Throws std::runtime_error if loading fails.
@@ -46,7 +48,6 @@ public:
 
 private:
     ResourceLoader();   // private ctor
-    ~ResourceLoader() = default;
 
     // Internal maps and mutex to guard them
     std::mutex                                      m_mutex;

@@ -1,11 +1,7 @@
 ﻿#include "AppContext.h"
 
-// Include each service’s header here (so we can construct them)
-#include "ScreenManager.h"
-#include "AudioService.h"
-#include "ResourceLoader.h"
-#include "InputService.h"
-#include "RandomService.h"
+
+
 
 ///
 /// AppContext Implementation

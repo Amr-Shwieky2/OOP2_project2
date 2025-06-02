@@ -46,7 +46,7 @@ void App::processEvents() {
             return;
         }
         // Forward the event to the active screen so it can handle input
-        m_context->getScreenManager().handleInput(event);
+        m_context->getScreenManager().handleInput(m_window);
     }
 }
 

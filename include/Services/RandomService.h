@@ -24,6 +24,8 @@ public:
     RandomService& operator=(const RandomService&) = delete;
     RandomService(RandomService&&) = delete;
     RandomService& operator=(RandomService&&) = delete;
+    ~RandomService() = default;
+
 
     /**
      * Returns a uniformly distributed integer in [min, max].
@@ -48,7 +50,6 @@ public:
 
 private:
     RandomService();
-    ~RandomService() = default;
 
     std::mt19937                 m_engine;       // Mersenne Twister engine
     std::mutex                   m_mutex;        // guards the engine
