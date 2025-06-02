@@ -1,5 +1,5 @@
 ﻿file (GLOB_RECURSE MY_SOURCE_FILES CONFIGURE_DEPENDS LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_LIST_DIR} *.cpp)
-target_sources (${CMAKE_PROJECT_NAME} PRIVATE ${MY_SOURCE_FILES} "Core/IScreen.cpp" "Core/State.cpp" "Services/InputService.cpp" "Services/RandomService.cpp" "Services/PhysicsService.cpp" "UI/Button.cpp" "UI/Label.cpp" "UI/HUD.cpp" "UI/Menu.cpp" "UI/UIManager.cpp" "UI/Widget.cpp" "Screens/SplashScreen.cpp" "Screens/MainMenuScreen.cpp" "Screens/GameplayScreen.cpp" "Screens/PauseScreen.cpp" "Screens/SettingsScreen.cpp" "Screens/GameOverScreen.cpp" "Screens/VictoryScreen.cpp" "Screens/TutorialScreen.cpp" "Screens/CreditsScreen.cpp" "Screens/CharacterSelectScreen.cpp")
+target_sources (${CMAKE_PROJECT_NAME} PRIVATE ${MY_SOURCE_FILES} "../include/Game/Entities/Entity.h" "Game/Entities/Entity.cpp" "../include/Game/Components/Component.h" "Game/Components/Component.cpp")
 
 
 add_subdirectory(Core)
