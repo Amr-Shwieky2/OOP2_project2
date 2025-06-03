@@ -1,3 +1,4 @@
+// File: src/Core/ScreenManager.cpp
 #include "ScreenManager.h"
 
 void ScreenManager::registerScreen(ScreenType type, std::function<std::unique_ptr<IScreen>()> creator) {
@@ -7,9 +8,8 @@ void ScreenManager::registerScreen(ScreenType type, std::function<std::unique_pt
 void ScreenManager::changeScreen(ScreenType type) {
     auto it = m_creators.find(type);
     if (it != m_creators.end()) {
-        m_currentScreen = it->second();  // Create new screen instance
+        m_currentScreen = it->second();
     }
-    // else: Optionally throw an exception or log an error
 }
 
 void ScreenManager::handleEvents(sf::RenderWindow& window) {
