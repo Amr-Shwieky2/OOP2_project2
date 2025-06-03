@@ -51,21 +51,16 @@ void SettingsScreen::setupTheme() {
 
 void SettingsScreen::setupUI() {
     // Title
+    auto& lang = LanguageManager::instance();
     m_titleText = SettingsUIFactory::createTitle(
-        "Settings",
+        lang.getText("settings_title"),
         sf::Vector2f(550, 50),
         m_font,
         m_colors
     );
 
-    // Back instruction
-    m_backText = SettingsUIFactory::createLabel(
-        "Press ESC to go back",
-        sf::Vector2f(500, 650),
-        m_font,
-        m_colors,
-        20
-    );
+
+
     m_backText.setFillColor(sf::Color(180, 180, 180));
     m_backText.setStyle(sf::Text::Italic);
 
@@ -75,10 +70,10 @@ void SettingsScreen::setupUI() {
 
 void SettingsScreen::setupVolumeControls() {
     auto& audioManager = AudioManager::instance();
+    auto& lang = LanguageManager::instance();
 
-    // Master Volume
     m_masterVolume = SettingsUIFactory::createVolumeControl(
-        "Master Volume:",
+        lang.getText("settings_volume") + " (Master):",
         sf::Vector2f(m_layout.labelX, m_layout.startY),
         m_font,
         m_colors,
@@ -89,9 +84,8 @@ void SettingsScreen::setupVolumeControls() {
         onMasterVolumeChanged(value);
         });
 
-    // Music Volume
     m_musicVolume = SettingsUIFactory::createVolumeControl(
-        "Music Volume:",
+        lang.getText("settings_volume") + " (Music):",
         sf::Vector2f(m_layout.labelX, m_layout.startY + m_layout.spacing),
         m_font,
         m_colors,
@@ -102,9 +96,8 @@ void SettingsScreen::setupVolumeControls() {
         onMusicVolumeChanged(value);
         });
 
-    // SFX Volume
     m_sfxVolume = SettingsUIFactory::createVolumeControl(
-        "SFX Volume:",
+        lang.getText("settings_volume") + " (SFX):",
         sf::Vector2f(m_layout.labelX, m_layout.startY + m_layout.spacing * 2),
         m_font,
         m_colors,
@@ -116,26 +109,28 @@ void SettingsScreen::setupVolumeControls() {
         });
 }
 
-void SettingsScreen::setupLanguageControl() {
-    // Language label
-    m_languageLabel = SettingsUIFactory::createLabel(
-        "Language:",
-        sf::Vector2f(m_layout.labelX, m_layout.startY + m_layout.spacing * 3),
-        m_font,
-        m_colors
-    );
 
-    // Language dropdown
-    m_languageDropdown = SettingsUIFactory::createLanguageDropdown(
-        sf::Vector2f(m_layout.labelX, m_layout.startY + m_layout.spacing * 3),
-        m_font,
-        m_colors,
-        m_layout
-    );
+void SettingsScreen::setupLanguageControl() {  
+   // Language label  
+   auto& lang = LanguageManager::instance(); // Ensure 'lang' is defined here  
+   m_languageLabel = SettingsUIFactory::createLabel(  
+       lang.getText("settings_language") + ":",  
+       sf::Vector2f(m_layout.labelX, m_layout.startY + m_layout.spacing * 3),  
+       m_font,  
+       m_colors  
+   );  
 
-    m_languageDropdown->setOnSelectionChanged([this](int index, int value) {
-        onLanguageChanged(index, value);
-        });
+   // Language dropdown  
+   m_languageDropdown = SettingsUIFactory::createLanguageDropdown(  
+       sf::Vector2f(m_layout.labelX, m_layout.startY + m_layout.spacing * 3),  
+       m_font,  
+       m_colors,  
+       m_layout  
+   );  
+
+   m_languageDropdown->setOnSelectionChanged([this](int index, int value) {  
+       onLanguageChanged(index, value);  
+   });  
 }
 
 void SettingsScreen::handleEvents(sf::RenderWindow& window) {

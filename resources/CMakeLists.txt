@@ -26,5 +26,8 @@ configure_file ("./icons/TransparentBall.png" ${CMAKE_BINARY_DIR} COPYONLY)
 
 
 configure_file ("./fonts/arial.ttf" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./fonts/tahoma.ttf" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./fonts/david.ttf" ${CMAKE_BINARY_DIR} COPYONLY)
+
 configure_file ("highScore.txt" ${CMAKE_BINARY_DIR} COPYONLY)
 
