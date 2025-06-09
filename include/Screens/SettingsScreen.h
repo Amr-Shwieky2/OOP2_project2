@@ -76,7 +76,7 @@ private:
     std::unique_ptr<ISettingsStorage> m_storage;
 };
 
-// Enhanced SettingsScreen
+// Enhanced SettingsScreen with Crash Protection
 class SettingsScreen : public IScreen {
 public:
     SettingsScreen();
@@ -126,6 +126,15 @@ private:
     void setupLanguageControl();
     void updateVolumeTexts();
     void updateLanguageTexts();
+
+    // NEW: Language preference loading
+    void loadLanguagePreference();
+
+    // NEW: Fallback UI setup for error cases
+    void setupFallbackUI();
+
+    // NEW: Emergency fallback for critical errors
+    void setupEmergencyFallback();
 
     // Event handlers
     void onMasterVolumeChanged(float volume);

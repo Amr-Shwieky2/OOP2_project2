@@ -1,14 +1,13 @@
-﻿#include "../../include/Screens/HelpScreen.h"
+﻿#include "../../include/Screens/AboutScreen.h"
 #include "AppContext.h"
 #include "ScreenTypes.h"
+#include <iostream>
 
-HelpScreen::HelpScreen() {
-    // تحميل صورة الخلفية فقط
+AboutScreen::AboutScreen() {
     try {
-        m_backgroundTexture = AppContext::instance().resources().getTexture("HelpScreen.png");
+        m_backgroundTexture = AppContext::instance().resources().getTexture("About_UsScreen.png");
         m_backgroundSprite.setTexture(m_backgroundTexture);
 
-        // تكبير الصورة لتملأ الشاشة (1400x800)
         sf::Vector2u textureSize = m_backgroundTexture.getSize();
         if (textureSize.x > 0 && textureSize.y > 0) {
             sf::Vector2f targetSize(1400.0f, 800.0f);
@@ -17,14 +16,15 @@ HelpScreen::HelpScreen() {
             m_backgroundSprite.setScale(scaleX, scaleY);
         }
 
-        std::cout << "Help screen image loaded successfully: HelpScreen.png" << std::endl;
+        std::cout << "About screen image loaded successfully: AboutScreen.png" << std::endl;
     }
     catch (...) {
-        std::cout << "Error: Could not load HelpScreen.png!" << std::endl;
+        std::cout << "Error: Could not load AboutScreen.png!" << std::endl;
+        std::cout << "Make sure AboutScreen.png is in the resources folder" << std::endl;
     }
 }
 
-void HelpScreen::handleEvents(sf::RenderWindow& window) {
+void AboutScreen::handleEvents(sf::RenderWindow& window) {
     sf::Event event;
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
@@ -33,21 +33,15 @@ void HelpScreen::handleEvents(sf::RenderWindow& window) {
 
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Escape) {
-                AppContext::instance().screenManager().changeScreen(ScreenType::MENU);
-            }
-        }
-
-        if (event.type == sf::Event::MouseButtonPressed) {
-            if (event.mouseButton.button == sf::Mouse::Left) {
+                std::cout << "About screen: ESC pressed, returning to menu" << std::endl;
                 AppContext::instance().screenManager().changeScreen(ScreenType::MENU);
             }
         }
     }
 }
 
-void HelpScreen::update(float deltaTime) {
-}
+void AboutScreen::update(float deltaTime) {}
 
-void HelpScreen::render(sf::RenderWindow& window) {
+void AboutScreen::render(sf::RenderWindow& window) {
     window.draw(m_backgroundSprite);
 }

@@ -1,5 +1,4 @@
-﻿// include/Application/AppContext.h
-#pragma once
+﻿#pragma once
 
 #include <memory>
 #include "AudioService.h"
@@ -11,7 +10,6 @@ class AppContext {
 public:
     static AppContext& instance();
 
-    // الخدمات الموجودة (بدون تغيير)
     AudioService& audio();
     ResourceLoader& resources();
     ScreenManager& screenManager();

@@ -53,6 +53,8 @@ public:
         const UITheme::Colors& colors,
         const UITheme::Layout& layout);
 
+    //std::string getSafeLanguageDisplayText(Language language);
+
     // Helper function to get display text for language
     static std::string getLanguageDisplayText(Language language);
 

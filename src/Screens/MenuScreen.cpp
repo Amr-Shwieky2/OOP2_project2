@@ -47,27 +47,43 @@ void MenuScreen::setupButtons() {
     const float startY = 200.0f;
     const float centerX = (1400.0f - buttonWidth - 120.0f);
 
+    const float aboutButtonWidth = 130.0f;
+    const float aboutButtonHeight = 100.0f;
+    const float aboutButtonX = 30.0f;  // بعيد عن الحافة اليسرى
+    const float aboutButtonY = 650.0f; // بعيد عن الحافة العلوية
+
     struct ButtonData {
         std::string text;
         std::string imagePath;
         sf::Color fallbackColor;
+        sf::Vector2f position;
+        sf::Vector2f size;
     };
 
     std::vector<ButtonData> buttonData = {
-        {"START GAME", "StartButtonEnglish.png", sf::Color(80, 200, 80, 255)},
-        {"SETTINGS", "SettingsButtonEnglish.png", sf::Color(80, 80, 200, 255)},
-        {"HELP", "HelpButtonEnglish.png", sf::Color(200, 200, 80, 255)},
-        {"EXIT", "ExitButtonEnglish.png", sf::Color(200, 80, 80, 255)}
+        // زر About Us في أعلى الشمال
+        {"ABOUT US", "AboutButton.png", sf::Color(150, 100, 200, 255),
+         sf::Vector2f(aboutButtonX, aboutButtonY), sf::Vector2f(aboutButtonWidth, aboutButtonHeight)},
+
+         // باقي الأزرار في اليمين
+         {"START GAME", "StartButtonEnglish.png", sf::Color(80, 200, 80, 255),
+          sf::Vector2f(centerX, startY), sf::Vector2f(buttonWidth, buttonHeight)},
+
+         {"SETTINGS", "SettingsButtonEnglish.png", sf::Color(80, 80, 200, 255),
+          sf::Vector2f(centerX, startY + buttonSpacing), sf::Vector2f(buttonWidth, buttonHeight)},
+
+         {"HELP", "HelpButtonEnglish.png", sf::Color(200, 200, 80, 255),
+          sf::Vector2f(centerX, startY + 2 * buttonSpacing), sf::Vector2f(buttonWidth, buttonHeight)},
+
+         {"EXIT", "ExitButtonEnglish.png", sf::Color(200, 80, 80, 255),
+          sf::Vector2f(centerX, startY + 3 * buttonSpacing), sf::Vector2f(buttonWidth, buttonHeight)}
     };
 
     m_buttons.clear();
     m_buttons.reserve(buttonData.size());
 
     for (size_t i = 0; i < buttonData.size(); i++) {
-        sf::Vector2f position(centerX, startY + i * buttonSpacing);
-        sf::Vector2f size(buttonWidth, buttonHeight);
-
-        Button button(position, size, buttonData[i].text);
+        Button button(buttonData[i].position, buttonData[i].size, buttonData[i].text);
         button.setFont(m_font);
 
         // Try to load image
@@ -91,20 +107,24 @@ void MenuScreen::setupButtons() {
 void MenuScreen::handleButtonCallbacks() {
     auto& screenManager = AppContext::instance().screenManager();
 
-    if (m_buttons.size() >= 4) {
+    if (m_buttons.size() >= 5) {
         m_buttons[0].setCallback([&screenManager]() {
-            screenManager.changeScreen(ScreenType::PLAY);
+            screenManager.changeScreen(ScreenType::ABOUT_US);
             });
 
         m_buttons[1].setCallback([&screenManager]() {
-            screenManager.changeScreen(ScreenType::SETTINGS);
+            screenManager.changeScreen(ScreenType::PLAY);
             });
 
         m_buttons[2].setCallback([&screenManager]() {
+            screenManager.changeScreen(ScreenType::SETTINGS);
+            });
+
+        m_buttons[3].setCallback([&screenManager]() {
             screenManager.changeScreen(ScreenType::HELP);
             });
 
-        m_buttons[3].setCallback([]() {
+        m_buttons[4].setCallback([]() {
             exit(0);
             });
     }
@@ -131,7 +151,7 @@ void MenuScreen::handleEvents(sf::RenderWindow& window) {
 
         if (event.type == sf::Event::MouseButtonPressed) {
             if (event.mouseButton.button == sf::Mouse::Left) {
-                sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
+                sf::Vector2f mousePos(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y));
 
                 for (auto& button : m_buttons) {
                     if (button.handleClick(mousePos)) {

@@ -1,182 +1,52 @@
-﻿// Add these new functions to your existing SettingsUIFactory.cpp
-
+// src/UI/SettingsUIFactory.cpp
 #include "SettingsUIFactory.h"
-#include "../Core/MultiFontManager.h"  // Add this include
+#include "../Core/MultiFontManager.h"
+#include <iostream>
 
-// NEW FUNCTION 1: Create text with appropriate font for specific language
-sf::Text SettingsUIFactory::createMultilingualText(
-    const sf::String& text,
-    sf::Vector2f position,
-    Language language,
-    const UITheme::Colors& colors,
-    int characterSize
-) {
-    sf::Text textObject;
-
-    // Use appropriate font for language
-    const sf::Font& font = MultiFontManager::instance().getFontForLanguage(language);
-    textObject.setFont(font);
-
-    textObject.setString(text);
-    textObject.setCharacterSize(characterSize);
-    textObject.setFillColor(colors.labelText);
-    textObject.setStyle(sf::Text::Bold);
-    textObject.setPosition(position);
-
-    return textObject;
-}
-
-// NEW FUNCTION 2: Update existing text with appropriate font for language
-void SettingsUIFactory::updateTextFont(sf::Text& text, Language language) {
-    const sf::Font& font = MultiFontManager::instance().getFontForLanguage(language);
-    text.setFont(font);
-}
-
-// NEW FUNCTION 3: Create enhanced language dropdown with proper font support
-std::unique_ptr<Dropdown> SettingsUIFactory::createEnhancedLanguageDropdown(
-    sf::Vector2f position,
-    const UITheme::Colors& colors,
-    const UITheme::Layout& layout
-) {
-    // Use current font from MultiFontManager
-    const sf::Font& currentFont = MultiFontManager::instance().getCurrentFont();
-
-    auto dropdown = std::make_unique<Dropdown>(
-        position,
-        layout.dropdownSize,
-        currentFont
-    );
-
-    dropdown->setColors(
-        colors.dropdownBackground,
-        colors.dropdownText,
-        colors.dropdownHighlight
-    );
-
-    // Get supported languages from MultiFontManager
-    auto supportedLanguages = MultiFontManager::instance().getSupportedLanguages();
-
-    // Add options based on supported languages
-    for (Language lang : supportedLanguages) {
-        std::string displayText = getLanguageDisplayText(lang);
-        dropdown->addOption(displayText, static_cast<int>(lang));
+sf::Text SettingsUIFactory::createTitle(const sf::String& text, sf::Vector2f position,
+    const sf::Font& font, const UITheme::Colors& colors) {
+    try {
+        sf::Text title;
+        title.setFont(font);
+        title.setString(text);
+        title.setCharacterSize(48);
+        title.setFillColor(colors.titleText);
+        title.setPosition(position);
+        title.setStyle(sf::Text::Bold);
+        return title;
     }
-
-    // Set current language as selected
-    Language currentLang = LanguageManager::instance().getCurrentLanguage();
-
-    // Find appropriate index
-    int currentIndex = 0;
-    for (size_t i = 0; i < supportedLanguages.size(); i++) {
-        if (supportedLanguages[i] == currentLang) {
-            currentIndex = static_cast<int>(i);
-            break;
-        }
-    }
-
-    dropdown->setSelectedIndex(currentIndex);
-
-    return dropdown;
-}
-
-// NEW FUNCTION 4: Helper function to get display text for language
-std::string SettingsUIFactory::getLanguageDisplayText(Language language) {
-    switch (language) {
-    case Language::ENGLISH:
-        return "English";
-    case Language::ARABIC:
-        // Check if Arabic font is supported
-        if (MultiFontManager::instance().isLanguageSupported(Language::ARABIC)) {
-            return "العربية"; // Arabic in Arabic script
-        }
-        else {
-            return "Arabic (عربي)"; // Fallback with mixed script
-        }
-    case Language::HEBREW:
-        // Check if Hebrew font is supported
-        if (MultiFontManager::instance().isLanguageSupported(Language::HEBREW)) {
-            return "עברית"; // Hebrew in Hebrew script
-        }
-        else {
-            return "Hebrew (עברית)"; // Fallback with mixed script
-        }
-    default:
-        return "Unknown";
+    catch (const std::exception& e) {
+        std::cout << "Error creating title: " << e.what() << std::endl;
+        sf::Text fallback;
+        fallback.setString("Settings");
+        fallback.setCharacterSize(48);
+        fallback.setFillColor(sf::Color::Yellow);
+        fallback.setPosition(position);
+        return fallback;
     }
 }
 
-// UPDATED FUNCTION: Enhanced createLanguageDropdown (replaces existing one)
-std::unique_ptr<Dropdown> SettingsUIFactory::createLanguageDropdown(
-    sf::Vector2f position,
-    const sf::Font& font,
-    const UITheme::Colors& colors,
-    const UITheme::Layout& layout
-) {
-    auto dropdown = std::make_unique<Dropdown>(
-        position,
-        layout.dropdownSize,
-        font
-    );
-
-    dropdown->setColors(
-        colors.dropdownBackground,
-        colors.dropdownText,
-        colors.dropdownHighlight
-    );
-
-    // Use helper function for consistent display text
-    dropdown->addOption(getLanguageDisplayText(Language::ENGLISH), static_cast<int>(Language::ENGLISH));
-    dropdown->addOption(getLanguageDisplayText(Language::ARABIC), static_cast<int>(Language::ARABIC));
-    dropdown->addOption(getLanguageDisplayText(Language::HEBREW), static_cast<int>(Language::HEBREW));
-
-    // Set current language as selected
-    Language currentLang = LanguageManager::instance().getCurrentLanguage();
-    dropdown->setSelectedIndex(static_cast<int>(currentLang));
-
-    return dropdown;
+sf::Text SettingsUIFactory::createLabel(const sf::String& text, sf::Vector2f position,
+    const sf::Font& font, const UITheme::Colors& colors, int characterSize) {
+    try {
+        sf::Text label;
+        label.setFont(font);
+        label.setString(text);
+        label.setCharacterSize(characterSize);
+        label.setFillColor(colors.labelText);
+        label.setPosition(position);
+        return label;
+    }
+    catch (const std::exception& e) {
+        std::cout << "Error creating label: " << e.what() << std::endl;
+        sf::Text fallback;
+        fallback.setString(text);
+        fallback.setCharacterSize(characterSize);
+        fallback.setFillColor(sf::Color::White);
+        fallback.setPosition(position);
+        return fallback;
+    }
 }
-// Add this missing function to your SettingsUIFactory.cpp
-
-sf::Text SettingsUIFactory::createLabel(
-    const sf::String& text,
-    sf::Vector2f position,
-    const sf::Font& font,
-    const UITheme::Colors& colors,
-    int characterSize
-) {
-    sf::Text label;
-    label.setFont(font);
-    label.setString(text);
-    label.setCharacterSize(characterSize);
-    label.setFillColor(colors.labelText);
-    label.setStyle(sf::Text::Bold);
-    label.setPosition(position);
-
-    return label;
-}
-
-// Also add createTitle if missing:
-sf::Text SettingsUIFactory::createTitle(
-    const sf::String& text,
-    sf::Vector2f position,
-    const sf::Font& font,
-    const UITheme::Colors& colors
-) {
-    sf::Text title;
-    title.setFont(font);
-    title.setString(text);
-    title.setCharacterSize(48);
-    title.setFillColor(colors.titleText);
-    title.setStyle(sf::Text::Bold);
-    title.setPosition(position);
-
-    // Center the title
-    sf::FloatRect textBounds = title.getLocalBounds();
-    title.setPosition(position.x - textBounds.width / 2, position.y);
-
-    return title;
-}
-// Correct createVolumeControl function for SettingsUIFactory.cpp
 
 SettingsUIFactory::VolumeControls SettingsUIFactory::createVolumeControl(
     const sf::String& labelText,
@@ -184,38 +54,175 @@ SettingsUIFactory::VolumeControls SettingsUIFactory::createVolumeControl(
     const sf::Font& font,
     const UITheme::Colors& colors,
     const UITheme::Layout& layout,
-    float initialValue
-) {
+    float initialValue) {
+
     VolumeControls controls;
 
-    // Create label
-    controls.label = createLabel(
-        labelText,
-        position,
-        font,
-        colors,
-        28
-    );
+    try {
+        // Create label
+        controls.label = createLabel(labelText, position, font, colors);
 
-    // Create slider with correct constructor (position, size, minValue, maxValue)
-    controls.slider = std::make_unique<Slider>(
-        sf::Vector2f(layout.controlX, position.y),  // position
-        layout.sliderSize,                          // size
-        0.0f,                                      // minValue
-        100.0f                                     // maxValue
-    );
+        // Create slider
+        controls.slider = std::make_unique<Slider>(
+            sf::Vector2f(layout.controlX, position.y + 10),
+            layout.sliderSize,
+            0.0f,
+            100.0f
+        );
+        controls.slider->setValue(initialValue);
+        controls.slider->setColors(colors.sliderBackground, colors.sliderFill, colors.sliderHandle);
 
-    // Set initial value
-    controls.slider->setValue(initialValue);
+        // Create value text
+        controls.value = createLabel(
+            std::to_string(static_cast<int>(initialValue)) + "%",
+            sf::Vector2f(layout.valueX, position.y),
+            font,
+            colors
+        );
+        controls.value.setFillColor(colors.valueText);
 
-    // Create value text
-    controls.value = createLabel(
-        std::to_string(static_cast<int>(initialValue)) + "%",
-        sf::Vector2f(layout.controlX + layout.sliderSize.x + 20, position.y),
-        font,
-        colors,
-        24
-    );
+        std::cout << "Volume control created successfully" << std::endl;
+    }
+    catch (const std::exception& e) {
+        std::cout << "Error creating volume control: " << e.what() << std::endl;
+    }
 
     return controls;
+}
+
+std::unique_ptr<Dropdown> SettingsUIFactory::createLanguageDropdown(
+    sf::Vector2f position,
+    const sf::Font& font,
+    const UITheme::Colors& colors,
+    const UITheme::Layout& layout) {
+
+    try {
+        auto dropdown = std::make_unique<Dropdown>(position, layout.dropdownSize, font);
+
+        // Add language options
+        dropdown->addOption(u8"English", static_cast<int>(Language::ENGLISH));
+        dropdown->addOption(u8"العربية", static_cast<int>(Language::ARABIC));  // Arabic
+        dropdown->addOption(u8"עברית", static_cast<int>(Language::HEBREW));   // Hebrew
+
+        // Set colors
+        dropdown->setColors(colors.dropdownBackground, colors.dropdownText, colors.dropdownHighlight);
+
+        // Set current selection based on current language
+        Language currentLang = LanguageManager::instance().getCurrentLanguage();
+        dropdown->setSelectedIndex(static_cast<int>(currentLang));
+
+        std::cout << "Language dropdown created successfully" << std::endl;
+        return dropdown;
+    }
+    catch (const std::exception& e) {
+        std::cout << "Error creating language dropdown: " << e.what() << std::endl;
+        return nullptr;
+    }
+}
+
+// NEW FUNCTIONS IMPLEMENTATION:
+
+sf::Text SettingsUIFactory::createMultilingualText(const sf::String& text,
+    sf::Vector2f position,
+    Language language,
+    const UITheme::Colors& colors,
+    int characterSize) {
+
+    try {
+        const sf::Font& font = MultiFontManager::instance().getFontForLanguage(language);
+        sf::Text multiText;
+        multiText.setFont(font);
+        multiText.setString(text);
+        multiText.setCharacterSize(characterSize);
+        multiText.setFillColor(colors.labelText);
+        multiText.setPosition(position);
+
+        std::cout << "Multilingual text created for language: "
+            << MultiFontManager::instance().getLanguageNameSafe(language) << std::endl;
+        return multiText;
+    }
+    catch (const std::exception& e) {
+        std::cout << "Error creating multilingual text: " << e.what() << std::endl;
+        // Fallback to default font
+        sf::Text fallback;
+        fallback.setString(text);
+        fallback.setCharacterSize(characterSize);
+        fallback.setFillColor(colors.labelText);
+        fallback.setPosition(position);
+        return fallback;
+    }
+}
+
+void SettingsUIFactory::updateTextFont(sf::Text& text, Language language) {
+    try {
+        const sf::Font& font = MultiFontManager::instance().getFontForLanguage(language);
+        text.setFont(font);
+        std::cout << "Text font updated for language: "
+            << MultiFontManager::instance().getLanguageNameSafe(language) << std::endl;
+    }
+    catch (const std::exception& e) {
+        std::cout << "Error updating text font: " << e.what() << std::endl;
+    }
+}
+
+std::unique_ptr<Dropdown> SettingsUIFactory::createEnhancedLanguageDropdown(
+    sf::Vector2f position,
+    const UITheme::Colors& colors,
+    const UITheme::Layout& layout) {
+
+    try {
+        // Get supported languages from MultiFontManager
+        auto supportedLanguages = MultiFontManager::instance().getSupportedLanguages();
+
+        if (supportedLanguages.empty()) {
+            std::cout << "No supported languages found!" << std::endl;
+            return nullptr;
+        }
+
+        // Use the font for current language
+        const sf::Font& font = MultiFontManager::instance().getCurrentFont();
+        auto dropdown = std::make_unique<Dropdown>(position, layout.dropdownSize, font);
+
+        // Add only supported languages
+        int currentIndex = 0;
+        Language currentLang = LanguageManager::instance().getCurrentLanguage();
+
+        for (size_t i = 0; i < supportedLanguages.size(); ++i) {
+            Language lang = supportedLanguages[i];
+            std::string displayText = getLanguageDisplayText(lang);
+            std::u8string utf8Text(displayText.begin(), displayText.end()); 
+            dropdown->addOption(utf8Text, static_cast<int>(lang));
+
+            if (lang == currentLang) {
+                currentIndex = static_cast<int>(i);
+            }
+        }
+
+        dropdown->setColors(colors.dropdownBackground, colors.dropdownText, colors.dropdownHighlight);
+        dropdown->setSelectedIndex(currentIndex);
+
+        std::cout << "Enhanced language dropdown created with "
+            << supportedLanguages.size() << " supported languages" << std::endl;
+        return dropdown;
+    }
+    catch (const std::exception& e) {
+        std::cout << "Error creating enhanced language dropdown: " << e.what() << std::endl;
+        return nullptr;
+    }
+}
+
+std::string SettingsUIFactory::getLanguageDisplayText(Language language) {
+    try {
+        return MultiFontManager::instance().getLanguageDisplayName(language);
+    }
+    catch (const std::exception& e) {
+        std::cout << "Error getting language display text: " << e.what() << std::endl;
+        // Fallback to safe names
+        switch (language) {
+        case Language::ENGLISH: return "English";
+        case Language::ARABIC: return "Arabic";
+        case Language::HEBREW: return "Hebrew";
+        default: return "Unknown";
+        }
+    }
 }

@@ -7,6 +7,10 @@ configure_file ("./images/SettingsButtonEnglish.png" ${CMAKE_BINARY_DIR} COPYONL
 configure_file ("./images/StartButtonEnglish.png" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("./images/Winning.png" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("./images/SettingsScreen.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./images/HelpScreen.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./images/About_usScreen.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./images/AboutButton.png" ${CMAKE_BINARY_DIR} COPYONLY)
+
 
 configure_file ("./icons/Cactus.png" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("./icons/CloseBox.png" ${CMAKE_BINARY_DIR} COPYONLY)
@@ -26,8 +30,15 @@ configure_file ("./icons/TransparentBall.png" ${CMAKE_BINARY_DIR} COPYONLY)
 
 
 configure_file ("./fonts/arial.ttf" ${CMAKE_BINARY_DIR} COPYONLY)
-configure_file ("./fonts/tahoma.ttf" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./fonts/Tahoma.ttf" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("./fonts/david.ttf" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./fonts/frank.ttf" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./fonts/NotoSansArabic-Regular.ttf" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./fonts/NotoSansHebrew-Regular.ttf" ${CMAKE_BINARY_DIR} COPYONLY)
 
 configure_file ("highScore.txt" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("arabic.txt" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("hebrew.txt" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("language.txt" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("english.txt" ${CMAKE_BINARY_DIR} COPYONLY)
 

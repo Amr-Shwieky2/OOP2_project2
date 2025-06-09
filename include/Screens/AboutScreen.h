@@ -1,12 +1,11 @@
-#pragma once  
-#include "../Core/IScreen.h"  
+#pragma once
+#include "../Core/IScreen.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-class HelpScreen : public IScreen {
+class AboutScreen : public IScreen {
 public:
-    HelpScreen();
-
+    AboutScreen();
     void handleEvents(sf::RenderWindow& window) override;
     void update(float deltaTime) override;
     void render(sf::RenderWindow& window) override;

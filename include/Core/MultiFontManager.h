@@ -25,6 +25,12 @@ public:
     // Get available languages that have proper font support
     std::vector<Language> getSupportedLanguages() const;
 
+    // Get display name for language in its own script (for UI)
+    std::string getLanguageDisplayName(Language language) const;
+
+    // Get safe language name for console output (ASCII only)
+    std::string getLanguageNameSafe(Language language) const;
+
 private:
     MultiFontManager() = default;
 
@@ -41,7 +47,7 @@ public:
     static EnhancedLanguageManager& instance();
 
     // Override setLanguage to handle font switching
-    void setLanguage(Language lang) ;
+    void setLanguage(Language lang);
 
     // Get text with proper font support check
     const std::string& getTextSafe(const std::string& key) const;

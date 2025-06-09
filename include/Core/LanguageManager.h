@@ -6,8 +6,8 @@
 
 enum class Language {
     ENGLISH,
-    HEBREW,
-    ARABIC
+    ARABIC,
+    HEBREW
 };
 
 class LanguageManager {

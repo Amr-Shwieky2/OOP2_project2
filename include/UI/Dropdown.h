@@ -9,7 +9,7 @@ class Dropdown {
 public:
     Dropdown(sf::Vector2f position, sf::Vector2f size, const sf::Font& font);
 
-    void addOption(const std::string& text, int value);
+    void addOption(const std::u8string& text, int value);
     void setSelectedIndex(int index);
     int getSelectedIndex() const { return m_selectedIndex; }
     int getSelectedValue() const;
@@ -24,9 +24,13 @@ public:
 
     void setColors(sf::Color background, sf::Color text, sf::Color highlight);
 
+    bool updateSelectedTextSafely();
+
+    bool renderOptionTextSafely(sf::RenderWindow& window, int index);
+
 private:
     struct Option {
-        std::string text;
+        std::u8string text;
         int value;
     };
 

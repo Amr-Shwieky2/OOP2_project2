@@ -1,6 +1,8 @@
-﻿#include "LanguageManager.h"
+﻿// src/Core/LanguageManager.cpp - IMPROVED VERSION
+#include "LanguageManager.h"
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 LanguageManager& LanguageManager::instance() {
     static LanguageManager instance;
@@ -12,6 +14,7 @@ void LanguageManager::setLanguage(Language lang) {
     if (m_texts[lang].empty()) {
         loadDefaultTexts();
     }
+    std::cout << "Language set to: " << static_cast<int>(lang) << std::endl;
 }
 
 const std::string& LanguageManager::getText(const std::string& key) const {
@@ -39,6 +42,7 @@ const std::string& LanguageManager::getTextForLanguage(Language lang, const std:
 void LanguageManager::loadLanguageFile(Language lang, const std::string& filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
+        std::cout << "Could not open language file: " << filePath << ", loading defaults" << std::endl;
         loadDefaultTexts();
         return;
     }
@@ -52,45 +56,30 @@ void LanguageManager::loadLanguageFile(Language lang, const std::string& filePat
             m_texts[lang][key] = value;
         }
     }
+
+    std::cout << "Loaded language file for language " << static_cast<int>(lang) << std::endl;
 }
 
 void LanguageManager::loadDefaultTexts() {
+    std::cout << "Loading default texts for all languages..." << std::endl;
+
     // English texts
-    m_texts[Language::ENGLISH]["menu_start"] = "START GAME";
-    m_texts[Language::ENGLISH]["menu_settings"] = "SETTINGS";
-    m_texts[Language::ENGLISH]["menu_help"] = "HELP";
-    m_texts[Language::ENGLISH]["menu_exit"] = "EXIT";
     m_texts[Language::ENGLISH]["settings_title"] = "Settings";
     m_texts[Language::ENGLISH]["settings_volume"] = "Volume";
     m_texts[Language::ENGLISH]["settings_language"] = "Language";
-    m_texts[Language::ENGLISH]["help_title"] = "Help";
-    m_texts[Language::ENGLISH]["language_english"] = "English";
-    m_texts[Language::ENGLISH]["language_hebrew"] = "Hebrew";
-    m_texts[Language::ENGLISH]["language_arabic"] = "Arabic";
+    m_texts[Language::ENGLISH]["settings_back"] = "Press ESC to go back";
 
-    // Hebrew texts
-    m_texts[Language::HEBREW]["menu_start"] = "התחל משחק";
-    m_texts[Language::HEBREW]["menu_settings"] = "הגדרות";
-    m_texts[Language::HEBREW]["menu_help"] = "עזרה";
-    m_texts[Language::HEBREW]["menu_exit"] = "יציאה";
-    m_texts[Language::HEBREW]["settings_title"] = "הגדרות";
-    m_texts[Language::HEBREW]["settings_volume"] = "עוצמת קול";
-    m_texts[Language::HEBREW]["settings_language"] = "שפה";
-    m_texts[Language::HEBREW]["help_title"] = "עזרה";
-    m_texts[Language::HEBREW]["language_english"] = "אנגלית";
-    m_texts[Language::HEBREW]["language_hebrew"] = "עברית";
-    m_texts[Language::HEBREW]["language_arabic"] = "ערבית";
-
-    // Arabic texts
-    m_texts[Language::ARABIC]["menu_start"] = "ابدأ اللعبة";
-    m_texts[Language::ARABIC]["menu_settings"] = "الإعدادات";
-    m_texts[Language::ARABIC]["menu_help"] = "المساعدة";
-    m_texts[Language::ARABIC]["menu_exit"] = "خروج";
+    // Arabic texts (العربية)
     m_texts[Language::ARABIC]["settings_title"] = "الإعدادات";
     m_texts[Language::ARABIC]["settings_volume"] = "مستوى الصوت";
     m_texts[Language::ARABIC]["settings_language"] = "اللغة";
-    m_texts[Language::ARABIC]["help_title"] = "المساعدة";
-    m_texts[Language::ARABIC]["language_english"] = "الإنجليزية";
-    m_texts[Language::ARABIC]["language_hebrew"] = "العبرية";
-    m_texts[Language::ARABIC]["language_arabic"] = "العربية";
+    m_texts[Language::ARABIC]["settings_back"] = "اضغط ESC للعودة";
+
+    // Hebrew texts (עברית)
+    m_texts[Language::HEBREW]["settings_title"] = "הגדרות";
+    m_texts[Language::HEBREW]["settings_volume"] = "עוצמת קול";
+    m_texts[Language::HEBREW]["settings_language"] = "שפה";
+    m_texts[Language::HEBREW]["settings_back"] = "לחץ ESC לחזור";
+
+    std::cout << "Default texts loaded for all languages" << std::endl;
 }
