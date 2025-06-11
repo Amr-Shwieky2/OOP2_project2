@@ -2,15 +2,15 @@
 #include "AppContext.h"
 #include "ScreenTypes.h"
 #include "Logger.h"
-#include "../Core/LanguageManager.h"
-#include "../Core/MultiFontManager.h"
+#include "LanguageManager.h"
+#include "MultiFontManager.h"
 
 // Include screen files
-#include "../Screens/LoadingScreen.h"
-#include "../Screens/MenuScreen.h"
-#include "../Screens/GameplayScreen.h"
-#include "../Screens/SettingsScreen.h"
-#include "../Screens/AboutScreen.h"
+#include "LoadingScreen.h"
+#include "MenuScreen.h"
+#include "GameplayScreen.h"
+#include "SettingsScreen.h"
+#include "AboutScreen.h"
 
 
 #include<fstream>
