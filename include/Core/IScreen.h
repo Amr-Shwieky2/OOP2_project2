@@ -1,18 +1,25 @@
-#pragma once
+﻿#pragma once
 
 #include <SFML/Graphics.hpp>
 
-// Abstract interface for all screen types
+// IScreen defines the minimal interface that every “screen” (menu, gameplay, pause, etc.)
+// must implement. Because of the pure‐virtual methods, IScreen is an abstract class.
 class IScreen {
 public:
     virtual ~IScreen() = default;
 
-    // Handle SFML input/events
-    virtual void handleEvents(sf::RenderWindow& window) = 0;
+    // Handle any input events (keyboard, mouse, window close, etc.)
+    virtual void handleInput(sf::RenderWindow& window) = 0;
 
-    // Update logic per frame
+    // Advance the screen’s internal logic by deltaTime seconds
     virtual void update(float deltaTime) = 0;
 
-    // Render visual elements to the window
+    // Draw this screen’s contents to the provided render window
     virtual void render(sf::RenderWindow& window) = 0;
+
+    // Called when this screen becomes active (pushed onto the stack or just switched to)
+    virtual void onEnter() = 0;
+
+    // Called when this screen is about to be removed (popped or replaced)
+    virtual void onExit() = 0;
 };
