@@ -1,6 +1,6 @@
-﻿﻿#include "AppContext.h"
+﻿#include "AppContext.h"
 
-AppContext & AppContext::instance() {
+AppContext& AppContext::instance() {
     static AppContext context;
     return context;
 }

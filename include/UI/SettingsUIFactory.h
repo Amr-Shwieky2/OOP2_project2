@@ -1,5 +1,3 @@
-// Add these new functions to your existing SettingsUIFactory.h
-
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <memory>

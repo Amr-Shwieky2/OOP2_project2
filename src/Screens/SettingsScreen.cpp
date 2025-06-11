@@ -1,94 +1,160 @@
-﻿// src/Screens/SettingsScreen.cpp - FIXED VERSION
-#include "../../include/Screens/SettingsScreen.h"
-#include "AppContext.h"
-#include "ScreenTypes.h"
-#include "../Core/AudioManager.h"
+﻿#include "../../include/Screens/SettingsScreen.h"
+#include "VolumeControlPanel.h"
+#include "LanguageControlPanel.h"
+#include "SettingsEventHandler.h"
 #include "../Core/LanguageManager.h"
-#include "../Core/MultiFontManager.h"
 #include <iostream>
-#include <fstream>
 
 SettingsScreen::SettingsScreen() {
-    // Initialize components in correct order
-    initializeSettingsManager();
-    loadLanguagePreference();
-    MultiFontManager::instance().loadLanguageFonts(); // Load fonts
-    loadResources();
-    setupTheme();
-    setupUI();
-    updateLanguageTexts();
-}
-
-void SettingsScreen::initializeSettingsManager() {
     try {
-        auto storage = std::make_unique<FileSettingsStorage>("settings.dat");
-        m_settingsManager = std::make_unique<SettingsManager<float>>(std::move(storage));
-        m_settingsManager->load();
-        std::cout << "Settings manager initialized successfully" << std::endl;
+        std::cout << "Initializing SettingsScreen..." << std::endl;
+
+        initializeResources();
+        initializeComponents();
+        wireComponents();
+
+        m_isInitialized = true;
+        std::cout << "SettingsScreen initialized successfully" << std::endl;
     }
     catch (const std::exception& e) {
-        std::cout << "Failed to initialize settings manager: " << e.what() << std::endl;
+        handleInitializationError("SettingsScreen: " + std::string(e.what()));
     }
 }
 
-void SettingsScreen::loadLanguagePreference() {
+SettingsScreen::~SettingsScreen() {
     try {
-        std::ifstream file("language.txt");
-        if (file.is_open()) {
-            std::string line;
-            while (std::getline(file, line)) {
-                if (line.length() == 0) continue;
+        std::cout << "Destroying SettingsScreen..." << std::endl;
+        cleanup();
+        std::cout << "SettingsScreen destroyed safely" << std::endl;
+    }
+    catch (const std::exception& e) {
+        std::cout << "Error destroying SettingsScreen: " << e.what() << std::endl;
+    }
+}
 
-                size_t pos = line.find('=');
-                if (pos != std::string::npos && pos > 0 && pos < line.length() - 1) {
-                    std::string key = line.substr(0, pos);
-                    std::string valueStr = line.substr(pos + 1);
-
-                    if (key == "language" && !valueStr.empty()) {
-                        try {
-                            int value = std::stoi(valueStr);
-                            if (value >= 0 && value <= 2) {
-                                Language savedLang = static_cast<Language>(value);
-                                LanguageManager::instance().setLanguage(savedLang);
-                                std::cout << "Loaded saved language: " << value << std::endl;
-                                break;
-                            }
-                        }
-                        catch (const std::exception& e) {
-                            std::cout << "Error parsing language value: " << e.what() << std::endl;
-                        }
-                    }
-                }
-            }
-            file.close();
+// IScreen interface implementation - متطابق مع Interface الأصلي
+void SettingsScreen::handleEvents(sf::RenderWindow& window) {
+    try {
+        if (m_eventHandler) {
+            m_eventHandler->handleEvents(window);
         }
-        else {
-            LanguageManager::instance().setLanguage(Language::ENGLISH);
-            std::cout << "Using default language: English" << std::endl;
+
+        checkForScreenTransition();
+    }
+    catch (const std::exception& e) {
+        handleUpdateError("Event handling", e);
+    }
+}
+
+void SettingsScreen::update(float deltaTime) {
+    try {
+        if (!m_isInitialized) {
+            return;
         }
+
+        updateAnimation(deltaTime);
+        updateComponents(deltaTime);
     }
     catch (const std::exception& e) {
-        std::cout << "Error loading language preference: " << e.what() << std::endl;
-        LanguageManager::instance().setLanguage(Language::ENGLISH);
+        handleUpdateError("Update", e);
     }
 }
 
-void SettingsScreen::loadResources() {
+void SettingsScreen::render(sf::RenderWindow& window) {
     try {
-        // Get the font for current language from MultiFontManager
-        m_font = MultiFontManager::instance().getCurrentFont();
-        std::cout << "Using font from MultiFontManager for current language" << std::endl;
-        loadBackground();
+        if (!m_isInitialized) {
+            return;
+        }
+
+        renderBackground(window);
+        renderScreenTexts(window);
+        renderComponents(window);
+        renderAnimationEffects(window);
     }
     catch (const std::exception& e) {
-        std::cout << "Error loading resources: " << e.what() << std::endl;
+        handleRenderError("Render", e);
     }
 }
 
-void SettingsScreen::loadBackground() {
+// Additional methods for screen management
+bool SettingsScreen::shouldReturnToMenu() const {
+    return m_shouldReturnToMenu;
+}
+
+void SettingsScreen::onEnter() {
     try {
-        if (m_backgroundTexture.loadFromFile("SettingsScreen.png")) {
+        std::cout << "Entering Settings Screen" << std::endl;
+
+        // Reset animation
+        m_animationTime = 0.0f;
+
+        // Reset exit flag
+        m_shouldReturnToMenu = false;
+        if (m_eventHandler) {
+            m_eventHandler->resetExitFlag();
+        }
+
+        std::cout << "Settings Screen entered successfully" << std::endl;
+    }
+    catch (const std::exception& e) {
+        std::cout << "Error entering settings screen: " << e.what() << std::endl;
+    }
+}
+
+void SettingsScreen::onExit() {
+    try {
+        std::cout << "Exiting Settings Screen" << std::endl;
+        // Auto-save any changes here if needed
+        std::cout << "Settings Screen exited successfully" << std::endl;
+    }
+    catch (const std::exception& e) {
+        std::cout << "Error exiting settings screen: " << e.what() << std::endl;
+    }
+}
+
+// Initialization methods
+void SettingsScreen::initializeResources() {
+    try {
+        // Load shared resources
+        if (!loadFont()) {
+            std::cout << "Warning: Using default font for SettingsScreen" << std::endl;
+        }
+
+        initializeBackground();
+        initializeTexts();
+
+        std::cout << "Resources initialized successfully" << std::endl;
+    }
+    catch (const std::exception& e) {
+        throw std::runtime_error("Resource initialization failed: " + std::string(e.what()));
+    }
+}
+
+void SettingsScreen::initializeComponents() {
+    try {
+        // Create volume control panel
+        m_volumePanel = std::make_shared<VolumeControlPanel>(m_font);
+        std::cout << "Volume control panel created" << std::endl;
+
+        // Create language control panel
+        m_languagePanel = std::make_shared<LanguageControlPanel>(m_font);
+        std::cout << "Language control panel created" << std::endl;
+
+        // Create event handler
+        m_eventHandler = std::make_unique<SettingsEventHandler>();
+        std::cout << "Settings event handler created" << std::endl;
+    }
+    catch (const std::exception& e) {
+        throw std::runtime_error("Component initialization failed: " + std::string(e.what()));
+    }
+}
+
+void SettingsScreen::initializeBackground() {
+    try {
+        if (loadBackgroundTexture()) {
             m_backgroundSprite.setTexture(m_backgroundTexture);
+
+            // Scale to fit window
             sf::Vector2u textureSize = m_backgroundTexture.getSize();
             if (textureSize.x > 0 && textureSize.y > 0) {
                 sf::Vector2f targetSize(1400.0f, 800.0f);
@@ -96,425 +162,217 @@ void SettingsScreen::loadBackground() {
                 float scaleY = targetSize.y / textureSize.y;
                 m_backgroundSprite.setScale(scaleX, scaleY);
             }
+            std::cout << "Background texture loaded and scaled" << std::endl;
         }
         else {
-            std::cout << "Background image not found: SettingsScreen.png" << std::endl;
+            setupFallbackBackground();
         }
     }
     catch (const std::exception& e) {
-        std::cout << "Failed to load background: " << e.what() << std::endl;
+        std::cout << "Error loading background: " << e.what() << std::endl;
+        setupFallbackBackground();
     }
 }
 
-void SettingsScreen::setupTheme() {
-    m_colors = UITheme::getDesertTheme();
-    m_layout = UITheme::getDefaultLayout();
-}
-
-void SettingsScreen::setupUI() {
+void SettingsScreen::initializeTexts() {
     auto& lang = LanguageManager::instance();
 
-    // Title
-    m_titleText = SettingsUIFactory::createTitle(
-        lang.getText("settings_title"),
-        sf::Vector2f(550, 50),
-        m_font,
-        m_colors
-    );
+    // Setup title text
+    m_titleText.setFont(m_font);
+    m_titleText.setString(lang.getText("settings_title"));
+    m_titleText.setCharacterSize(48);
+    m_titleText.setFillColor(sf::Color::Yellow);
+    m_titleText.setPosition(550, 50);
+    m_titleText.setStyle(sf::Text::Bold);
 
-    // Back text
-    m_backText.setFont(m_font);
-    m_backText.setString(lang.getText("settings_back"));
-    m_backText.setCharacterSize(20);
-    m_backText.setPosition(500, 650);
-    m_backText.setFillColor(sf::Color(180, 180, 180));
-    m_backText.setStyle(sf::Text::Italic);
+    // Setup back instruction text
+    m_backInstructionText.setFont(m_font);
+    m_backInstructionText.setString(lang.getText("settings_back"));
+    m_backInstructionText.setCharacterSize(20);
+    m_backInstructionText.setFillColor(sf::Color(180, 180, 180));
+    m_backInstructionText.setPosition(500, 650);
+    m_backInstructionText.setStyle(sf::Text::Italic);
 
-    setupVolumeControls();
-    setupLanguageControl();
+    std::cout << "Screen texts initialized" << std::endl;
 }
 
-void SettingsScreen::setupVolumeControls() {
+void SettingsScreen::wireComponents() {
     try {
-        auto& audioManager = AudioManager::instance();
-        auto& lang = LanguageManager::instance();
-
-        std::string volumeText = lang.getText("settings_volume");
-        if (volumeText.empty()) {
-            volumeText = "Volume";
-        }
-
-        // Master Volume
-        m_masterVolume = SettingsUIFactory::createVolumeControl(
-            sf::String(volumeText + " (Master):"),
-            sf::Vector2f(m_layout.labelX, m_layout.startY),
-            m_font,
-            m_colors,
-            m_layout,
-            audioManager.getMasterVolume()
-        );
-
-        if (m_masterVolume.slider) {
-            m_masterVolume.slider->setOnValueChanged([this](float value) {
-                try {
-                    onMasterVolumeChanged(value);
-                }
-                catch (...) {
-                    std::cout << "Error in master volume callback" << std::endl;
-                }
-                });
-        }
-
-        // Music Volume
-        m_musicVolume = SettingsUIFactory::createVolumeControl(
-            sf::String(volumeText + " (Music):"),
-            sf::Vector2f(m_layout.labelX, m_layout.startY + m_layout.spacing),
-            m_font,
-            m_colors,
-            m_layout,
-            audioManager.getMusicVolume()
-        );
-
-        if (m_musicVolume.slider) {
-            m_musicVolume.slider->setOnValueChanged([this](float value) {
-                try {
-                    onMusicVolumeChanged(value);
-                }
-                catch (...) {
-                    std::cout << "Error in music volume callback" << std::endl;
-                }
-                });
-        }
-
-        // SFX Volume
-        m_sfxVolume = SettingsUIFactory::createVolumeControl(
-            sf::String(volumeText + " (SFX):"),
-            sf::Vector2f(m_layout.labelX, m_layout.startY + m_layout.spacing * 2),
-            m_font,
-            m_colors,
-            m_layout,
-            audioManager.getSFXVolume()
-        );
-
-        if (m_sfxVolume.slider) {
-            m_sfxVolume.slider->setOnValueChanged([this](float value) {
-                try {
-                    onSFXVolumeChanged(value);
-                }
-                catch (...) {
-                    std::cout << "Error in SFX volume callback" << std::endl;
-                }
-                });
+        // Connect event handler to components using shared_ptr (safe)
+        if (m_eventHandler) {
+            m_eventHandler->setVolumePanel(m_volumePanel);
+            m_eventHandler->setLanguagePanel(m_languagePanel);
+            std::cout << "Components wired to event handler" << std::endl;
         }
     }
     catch (const std::exception& e) {
-        std::cout << "Error setting up volume controls: " << e.what() << std::endl;
+        throw std::runtime_error("Component wiring failed: " + std::string(e.what()));
     }
 }
 
-void SettingsScreen::setupLanguageControl() {
-    auto& lang = LanguageManager::instance();
+// Update methods
+void SettingsScreen::updateAnimation(float deltaTime) {
+    m_animationTime += deltaTime;
 
-    // Language label
-    m_languageLabel = SettingsUIFactory::createLabel(
-        lang.getText("settings_language") + ":",
-        sf::Vector2f(m_layout.labelX, m_layout.startY + m_layout.spacing * 3),
-        m_font,
-        m_colors
-    );
-
-    // Language dropdown
-    m_languageDropdown = SettingsUIFactory::createLanguageDropdown(
-        sf::Vector2f(m_layout.controlX, m_layout.startY + m_layout.spacing * 3),
-        m_font,
-        m_colors,
-        m_layout
-    );
-
-    if (m_languageDropdown) {
-        m_languageDropdown->setOnSelectionChanged([this](int index, int value) {
-            onLanguageChanged(index, value);
-            });
-    }
+    // Animate title glow effect
+    float glowIntensity = 0.7f + 0.3f * sin(m_animationTime * 2.0f);
+    sf::Color titleColor = sf::Color::Yellow;
+    titleColor.a = static_cast<sf::Uint8>(255 * glowIntensity);
+    m_titleText.setFillColor(titleColor);
 }
 
-void SettingsScreen::handleEvents(sf::RenderWindow& window) {
-    sf::Event event;
-    while (window.pollEvent(event)) {
-        try {
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            }
-
-            if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::Escape) {
-                    AppContext::instance().screenManager().changeScreen(ScreenType::MENU);
-                }
-            }
-
-            if (event.type == sf::Event::MouseMoved) {
-                sf::Vector2f mousePos(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y));
-
-                if (m_masterVolume.slider) m_masterVolume.slider->handleMouseMove(mousePos);
-                if (m_musicVolume.slider) m_musicVolume.slider->handleMouseMove(mousePos);
-                if (m_sfxVolume.slider) m_sfxVolume.slider->handleMouseMove(mousePos);
-                if (m_languageDropdown) m_languageDropdown->handleMouseMove(mousePos);
-            }
-
-            if (event.type == sf::Event::MouseButtonPressed) {
-                if (event.mouseButton.button == sf::Mouse::Left) {
-                    sf::Vector2f mousePos(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y));
-
-                    bool handled = false;
-                    if (m_masterVolume.slider) handled |= m_masterVolume.slider->handleMousePressed(mousePos);
-                    if (m_musicVolume.slider) handled |= m_musicVolume.slider->handleMousePressed(mousePos);
-                    if (m_sfxVolume.slider) handled |= m_sfxVolume.slider->handleMousePressed(mousePos);
-                    if (m_languageDropdown) handled |= m_languageDropdown->handleMousePressed(mousePos);
-                }
-            }
-
-            if (event.type == sf::Event::MouseButtonReleased) {
-                if (event.mouseButton.button == sf::Mouse::Left) {
-                    if (m_masterVolume.slider) m_masterVolume.slider->handleMouseReleased();
-                    if (m_musicVolume.slider) m_musicVolume.slider->handleMouseReleased();
-                    if (m_sfxVolume.slider) m_sfxVolume.slider->handleMouseReleased();
-                }
-            }
-        }
-        catch (const std::exception& e) {
-            std::cout << "Error handling event: " << e.what() << std::endl;
-        }
-    }
-}
-
-void SettingsScreen::update(float deltaTime) {
+void SettingsScreen::updateComponents(float deltaTime) {
     try {
-        m_animationTime += deltaTime;
+        if (m_volumePanel) {
+            m_volumePanel->update(deltaTime);
+        }
 
-        if (m_masterVolume.slider) m_masterVolume.slider->update(deltaTime);
-        if (m_musicVolume.slider) m_musicVolume.slider->update(deltaTime);
-        if (m_sfxVolume.slider) m_sfxVolume.slider->update(deltaTime);
-        if (m_languageDropdown) m_languageDropdown->update(deltaTime);
-
-        if (m_settingsChanged && m_autoSaveClock.getElapsedTime().asSeconds() > 2.0f) {
-            autoSaveSettings();
-            m_settingsChanged = false;
-            m_autoSaveClock.restart();
+        if (m_languagePanel) {
+            m_languagePanel->update(deltaTime);
         }
     }
     catch (const std::exception& e) {
-        std::cout << "Error in update: " << e.what() << std::endl;
+        std::cout << "Error updating components: " << e.what() << std::endl;
     }
 }
 
-void SettingsScreen::render(sf::RenderWindow& window) {
-    try {
-        if (m_backgroundTexture.getSize().x > 0) {
-            window.draw(m_backgroundSprite);
+void SettingsScreen::checkForScreenTransition() {
+    if (m_eventHandler && m_eventHandler->shouldExitToMenu()) {
+        std::cout << "Screen transition requested - exit to menu" << std::endl;
+
+        // تعيين flag مرة واحدة فقط
+        if (!m_shouldReturnToMenu) {
+            m_shouldReturnToMenu = true;
+            std::cout << "Set flag to return to menu - will be handled by screen manager" << std::endl;
         }
 
-        window.draw(m_titleText);
-
-        window.draw(m_masterVolume.label);
-        if (m_masterVolume.slider) m_masterVolume.slider->render(window);
-        window.draw(m_masterVolume.value);
-
-        window.draw(m_musicVolume.label);
-        if (m_musicVolume.slider) m_musicVolume.slider->render(window);
-        window.draw(m_musicVolume.value);
-
-        window.draw(m_sfxVolume.label);
-        if (m_sfxVolume.slider) m_sfxVolume.slider->render(window);
-        window.draw(m_sfxVolume.value);
-
-        window.draw(m_languageLabel);
-        if (m_languageDropdown) m_languageDropdown->render(window);
-
-        window.draw(m_backText);
-    }
-    catch (const std::exception& e) {
-        std::cout << "Error in render: " << e.what() << std::endl;
+        // إعادة تعيين flag في EventHandler
+        m_eventHandler->resetExitFlag();
     }
 }
 
-void SettingsScreen::updateVolumeTexts() {
-    if (m_masterVolume.slider) {
-        m_masterVolume.value.setString(std::to_string(static_cast<int>(m_masterVolume.slider->getValue())) + "%");
-    }
-    if (m_musicVolume.slider) {
-        m_musicVolume.value.setString(std::to_string(static_cast<int>(m_musicVolume.slider->getValue())) + "%");
-    }
-    if (m_sfxVolume.slider) {
-        m_sfxVolume.value.setString(std::to_string(static_cast<int>(m_sfxVolume.slider->getValue())) + "%");
+// Render methods with enhanced visuals
+void SettingsScreen::renderBackground(sf::RenderWindow& window) {
+    if (m_backgroundTexture.getSize().x > 0) {
+        window.draw(m_backgroundSprite);
     }
 }
 
-void SettingsScreen::updateLanguageTexts() {
-    auto& langManager = LanguageManager::instance();
+void SettingsScreen::renderScreenTexts(sf::RenderWindow& window) {
+    // Draw title with shadow effect
+    sf::Text titleShadow = m_titleText;
+    titleShadow.setFillColor(sf::Color(0, 0, 0, 100));
+    titleShadow.setPosition(m_titleText.getPosition().x + 3, m_titleText.getPosition().y + 3);
+    window.draw(titleShadow);
+    window.draw(m_titleText);
 
-    m_titleText.setString(langManager.getText("settings_title"));
-
-    std::string volumeText = langManager.getText("settings_volume");
-    m_masterVolume.label.setString(volumeText + " (Master):");
-    m_musicVolume.label.setString(volumeText + " (Music):");
-    m_sfxVolume.label.setString(volumeText + " (SFX):");
-    m_languageLabel.setString(langManager.getText("settings_language") + ":");
-    m_backText.setString(langManager.getText("settings_back"));
-
-    // Update fonts for proper language display
-    Language currentLang = langManager.getCurrentLanguage();
-    const sf::Font& currentFont = MultiFontManager::instance().getFontForLanguage(currentLang);
-
-    m_titleText.setFont(currentFont);
-    m_masterVolume.label.setFont(currentFont);
-    m_musicVolume.label.setFont(currentFont);
-    m_sfxVolume.label.setFont(currentFont);
-    m_languageLabel.setFont(currentFont);
-    m_backText.setFont(currentFont);
+    // Draw back instruction
+    window.draw(m_backInstructionText);
 }
 
-void SettingsScreen::onMasterVolumeChanged(float volume) {
+void SettingsScreen::renderComponents(sf::RenderWindow& window) {
+    if (m_volumePanel) {
+        m_volumePanel->render(window);
+    }
+
+    if (m_languagePanel) {
+        m_languagePanel->render(window);
+    }
+}
+
+void SettingsScreen::renderAnimationEffects(sf::RenderWindow& window) {
+    // Additional visual effects can be added here
+    // For example: particle effects, transitions, etc.
+}
+
+// Resource management
+bool SettingsScreen::loadFont() {
     try {
-        AudioManager::instance().setMasterVolume(volume);
-        updateVolumeTexts();
-        m_settingsChanged = true;
-    }
-    catch (const std::exception& e) {
-        std::cout << "Error changing master volume: " << e.what() << std::endl;
-    }
-}
-
-void SettingsScreen::onMusicVolumeChanged(float volume) {
-    try {
-        AudioManager::instance().setMusicVolume(volume);
-        updateVolumeTexts();
-        m_settingsChanged = true;
-    }
-    catch (const std::exception& e) {
-        std::cout << "Error changing music volume: " << e.what() << std::endl;
-    }
-}
-
-void SettingsScreen::onSFXVolumeChanged(float volume) {
-    try {
-        AudioManager::instance().setSFXVolume(volume);
-        updateVolumeTexts();
-        m_settingsChanged = true;
-    }
-    catch (const std::exception& e) {
-        std::cout << "Error changing SFX volume: " << e.what() << std::endl;
-    }
-}
-
-void SettingsScreen::onLanguageChanged(int index, int value) {
-    try {
-        Language newLang = static_cast<Language>(value);
-        LanguageManager::instance().setLanguage(newLang);
-
-        // Save language preference
-        std::ofstream file("language.txt");
-        if (file.is_open()) {
-            file << "language=" << value << std::endl;
-            file.close();
+        // Try to load the preferred font
+        if (m_font.loadFromFile("arial.ttf")) {
+            return true;
         }
 
-        // Update all UI text
-        updateLanguageTexts();
-        m_settingsChanged = true;
-
-        std::cout << "Language changed to: " << value << std::endl;
+        std::cout << "Could not load external font, using SFML default" << std::endl;
+        return false;
     }
     catch (const std::exception& e) {
-        std::cout << "Error changing language: " << e.what() << std::endl;
+        std::cout << "Exception loading font: " << e.what() << std::endl;
+        return false;
     }
 }
 
-void SettingsScreen::autoSaveSettings() {
+bool SettingsScreen::loadBackgroundTexture() {
     try {
-        if (m_settingsManager) {
-            if (m_masterVolume.slider) {
-                m_settingsManager->setSetting("master_volume", m_masterVolume.slider->getValue());
-            }
-            if (m_musicVolume.slider) {
-                m_settingsManager->setSetting("music_volume", m_musicVolume.slider->getValue());
-            }
-            if (m_sfxVolume.slider) {
-                m_settingsManager->setSetting("sfx_volume", m_sfxVolume.slider->getValue());
-            }
-            m_settingsManager->save();
-            std::cout << "Settings auto-saved" << std::endl;
+        return m_backgroundTexture.loadFromFile("SettingsScreen.png");
+    }
+    catch (const std::exception& e) {
+        std::cout << "Exception loading background: " << e.what() << std::endl;
+        return false;
+    }
+}
+
+void SettingsScreen::setupFallbackBackground() {
+    std::cout << "Setting up fallback background" << std::endl;
+
+    // Create a simple gradient background
+    const unsigned int width = 1400;
+    const unsigned int height = 800;
+
+    m_backgroundTexture.create(width, height);
+    sf::Uint8* pixels = new sf::Uint8[width * height * 4];
+
+    for (unsigned int y = 0; y < height; ++y) {
+        for (unsigned int x = 0; x < width; ++x) {
+            unsigned int index = (y * width + x) * 4;
+            float gradient = static_cast<float>(y) / height;
+
+            pixels[index] = static_cast<sf::Uint8>(50 + 100 * gradient);     // R
+            pixels[index + 1] = static_cast<sf::Uint8>(30 + 80 * gradient);  // G
+            pixels[index + 2] = static_cast<sf::Uint8>(80 + 120 * gradient); // B
+            pixels[index + 3] = 255; // A
         }
     }
-    catch (const std::exception& e) {
-        std::cout << "Error auto-saving settings: " << e.what() << std::endl;
-    }
+
+    m_backgroundTexture.update(pixels);
+    m_backgroundSprite.setTexture(m_backgroundTexture);
+    delete[] pixels;
 }
 
-void SettingsScreen::resetToDefaults() {
+void SettingsScreen::cleanup() {
     try {
-        if (m_settingsManager) {
-            m_settingsManager->clear();
-            AudioManager::instance().setMasterVolume(100.0f);
-            AudioManager::instance().setMusicVolume(100.0f);
-            AudioManager::instance().setSFXVolume(100.0f);
-            LanguageManager::instance().setLanguage(Language::ENGLISH);
-            setupVolumeControls();
-            setupLanguageControl();
-            updateLanguageTexts();
-            std::cout << "Settings reset to defaults" << std::endl;
+        // تنظيف EventHandler أولاً
+        if (m_eventHandler) {
+            m_eventHandler->cleanup();
+            m_eventHandler.reset();
         }
+
+        // ثم باقي المكونات
+        if (m_volumePanel) {
+            m_volumePanel.reset();
+        }
+
+        if (m_languagePanel) {
+            m_languagePanel.reset();
+        }
+
+        std::cout << "SettingsScreen cleanup completed" << std::endl;
     }
     catch (const std::exception& e) {
-        std::cout << "Error resetting settings: " << e.what() << std::endl;
+        std::cout << "Error during cleanup: " << e.what() << std::endl;
     }
 }
 
-// FileSettingsStorage implementation
-void FileSettingsStorage::saveSettings(const std::unordered_map<std::string, float>& settings) {
-    try {
-        std::ofstream file(m_filename);
-        if (file.is_open()) {
-            for (const auto& [key, value] : settings) {
-                file << key << "=" << value << std::endl;
-            }
-            file.close();
-        }
-    }
-    catch (const std::exception& e) {
-        std::cout << "Error saving settings to file: " << e.what() << std::endl;
-    }
+// Error handling
+void SettingsScreen::handleInitializationError(const std::string& component) {
+    std::cout << "Initialization error in " << component << std::endl;
+    m_isInitialized = false;
 }
 
-std::unordered_map<std::string, float> FileSettingsStorage::loadSettings() {
-    std::unordered_map<std::string, float> settings;
-    try {
-        std::ifstream file(m_filename);
-        if (file.is_open()) {
-            std::string line;
-            while (std::getline(file, line)) {
-                if (line.length() == 0) continue;
-                size_t pos = line.find('=');
-                if (pos != std::string::npos && pos > 0 && pos < line.length() - 1) {
-                    std::string key = line.substr(0, pos);
-                    std::string valueStr = line.substr(pos + 1);
-                    if (!valueStr.empty()) {
-                        float value = std::stof(valueStr);
-                        settings[key] = value;
-                    }
-                }
-            }
-            file.close();
-        }
-    }
-    catch (const std::exception& e) {
-        std::cout << "Error loading settings from file: " << e.what() << std::endl;
-    }
-    return settings;
+void SettingsScreen::handleUpdateError(const std::string& component, const std::exception& e) {
+    std::cout << "Update error in " << component << ": " << e.what() << std::endl;
 }
 
-bool FileSettingsStorage::isValid() const {
-    return !m_filename.empty();
+void SettingsScreen::handleRenderError(const std::string& component, const std::exception& e) {
+    std::cout << "Render error in " << component << ": " << e.what() << std::endl;
 }
-
-
-
