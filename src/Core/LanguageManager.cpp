@@ -46,6 +46,7 @@ void LanguageManager::loadLanguageFile(Language lang, const std::string& filePat
         loadDefaultTexts();
         return;
     }
+    //ads
 
     std::string line;
     while (std::getline(file, line)) {
