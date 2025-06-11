@@ -1,6 +1,22 @@
 ﻿#include "AppContext.h"
 
 
+<<<<<<< HEAD
+AppContext::AppContext() {
+    // الخدمات الموجودة
+    m_audioService = std::make_unique<AudioService>();
+    m_resourceLoader = std::make_unique<ResourceLoader>();
+    m_screenManager = std::make_unique<ScreenManager>();
+
+    // ✅ Template Resource Managers الجديدة
+    m_textureManager = std::make_unique<TextureManager>();
+    m_fontManager = std::make_unique<FontManager>();
+    m_soundManager = std::make_unique<SoundManager>();
+}
+
+// الخدمات الموجودة
+AudioService& AppContext::audio() {
+=======
 
 
 ///
@@ -40,6 +56,7 @@ ScreenManager& AppContext::getScreenManager() {
 }
 
 AudioService& AppContext::getAudioService() {
+>>>>>>> 70f8dadc4c8b82d7171402a7e9888286f78eafbe
     return *m_audioService;
 }
 
@@ -47,6 +64,10 @@ ResourceLoader& AppContext::getResourceLoader() {
     return *m_resourceLoader;
 }
 
+<<<<<<< HEAD
+ScreenManager& AppContext::screenManager() {
+    return *m_screenManager;
+=======
 InputService& AppContext::getInputService() {
     return *m_inputService;
 }
@@ -57,4 +78,18 @@ RandomService& AppContext::getRandomService() {
 
 b2World& AppContext::getPhysicsWorld() {
     return *m_physicsWorld;
+>>>>>>> 70f8dadc4c8b82d7171402a7e9888286f78eafbe
+}
+
+// ✅ Template Resource Managers الجديدة
+TextureManager& AppContext::textures() {
+    return *m_textureManager;
+}
+
+FontManager& AppContext::fonts() {
+    return *m_fontManager;
+}
+
+SoundManager& AppContext::sounds() {
+    return *m_soundManager;
 }

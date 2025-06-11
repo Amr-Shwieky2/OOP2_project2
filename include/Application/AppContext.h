@@ -8,6 +8,10 @@
 #include "ScreenManager.h"
 #include "AudioService.h"
 #include "ResourceLoader.h"
+<<<<<<< HEAD
+#include "ScreenManager.h"
+#include "ResourceManager.h"  
+=======
 #include "InputService.h"
 
 
@@ -30,19 +34,43 @@
 ///  • We pass the SFML window to AudioService (if needed) and InputService as references.
 ///  • We create the Box2D world here so that any physics‐enabled entity can retrieve it.
 ///
+>>>>>>> 70f8dadc4c8b82d7171402a7e9888286f78eafbe
 
 class AppContext {
 public:
     // Constructor takes the SFML window reference, so services can use it if needed
     explicit AppContext(sf::RenderWindow& mainWindow);
 
+<<<<<<< HEAD
+    AudioService& audio();
+    ResourceLoader& resources();
+    ScreenManager& screenManager();
+
+    // ✅ Template Resource Managers الجديدة فقط
+    TextureManager& textures();
+    FontManager& fonts();
+    SoundManager& sounds();
+=======
     // Destructor: default is fine; unique_ptr will free resources automatically
     ~AppContext() = default;
+>>>>>>> 70f8dadc4c8b82d7171402a7e9888286f78eafbe
 
     // No copying
     AppContext(const AppContext&) = delete;
     AppContext& operator=(const AppContext&) = delete;
 
+<<<<<<< HEAD
+    // الخدمات الموجودة (بدون تغيير)
+    std::unique_ptr<AudioService> m_audioService;
+    std::unique_ptr<ResourceLoader> m_resourceLoader;
+    std::unique_ptr<ScreenManager> m_screenManager;
+
+    // ✅ Template Resource Managers الجديدة فقط
+    std::unique_ptr<TextureManager> m_textureManager;
+    std::unique_ptr<FontManager> m_fontManager;
+    std::unique_ptr<SoundManager> m_soundManager;
+};
+=======
     // Accessors for each service:
     ScreenManager& getScreenManager();
     AudioService& getAudioService();
@@ -65,3 +93,4 @@ private:
     std::unique_ptr<InputService>    m_inputService;
     std::unique_ptr<RandomService>   m_randomService;
 };
+>>>>>>> 70f8dadc4c8b82d7171402a7e9888286f78eafbe

@@ -1,14 +1,26 @@
+<<<<<<< HEAD
+// File: src/Core/ScreenManager.cpp
+#include "ScreenManager.h"
+=======
 ﻿#include "ScreenManager.h"
 #include <iostream>
+>>>>>>> 70f8dadc4c8b82d7171402a7e9888286f78eafbe
 
 ScreenManager::ScreenManager() = default;
 
+<<<<<<< HEAD
+void ScreenManager::changeScreen(ScreenType type) {
+    auto it = m_creators.find(type);
+    if (it != m_creators.end()) {
+        m_currentScreen = it->second();
+=======
 ScreenManager::~ScreenManager() {
     // When ScreenManager is destroyed, its stack of unique_ptr<IScreen> will automatically clean up.
     // However, ensure that any onExit() is called on each before destruction (optional).
     while (!m_screens.empty()) {
         m_screens.top()->onExit();
         m_screens.pop();
+>>>>>>> 70f8dadc4c8b82d7171402a7e9888286f78eafbe
     }
 }
 
