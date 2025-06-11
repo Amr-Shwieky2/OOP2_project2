@@ -1,32 +1,20 @@
 ﻿#pragma once
 
-#include <memory>
 #include <SFML/Graphics.hpp>
-
+#include <memory>
 
 class App {
 public:
     App();
-    ~App();
+    ~App() = default;
 
-    // Starts the main loop. This will never return until the window is closed.
-    void run();
-
+    void run();  // Start the application
 private:
-
     void initialize();
     void initializeLanguageSystem();
     void loadLanguagePreference();
     // Load resources, register screens
     void mainLoop();       // Main update/render loop
 
-
-    // Called each frame to update game logic (screen updates, physics, etc.)
-    void update(float deltaTime);
-
-    // Called each frame to draw everything to the window
-    void render();
-
-    sf::RenderWindow                   m_window;
-    std::unique_ptr<AppContext>        m_context;
+    std::unique_ptr<sf::RenderWindow> m_window;
 };
