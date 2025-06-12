@@ -1,18 +1,22 @@
 #pragma once
-
 #include <SFML/Graphics.hpp>
 
-// Abstract interface for all screen types
+/**
+ * @brief Interface for all game screens (menu, gameplay, settings, etc.)
+ *
+ * Each screen handles its own input, logic updates, and rendering.
+ * Follows State Pattern - different screens = different game states.
+ */
 class IScreen {
 public:
     virtual ~IScreen() = default;
 
-    // Handle SFML input/events
+    // Handle user input (keyboard, mouse, window events)
     virtual void handleEvents(sf::RenderWindow& window) = 0;
 
-    // Update logic per frame
+    // Update game logic each frame (animations, movement, etc.)
     virtual void update(float deltaTime) = 0;
 
-    // Render visual elements to the window
+    // Draw everything to screen (sprites, text, UI)
     virtual void render(sf::RenderWindow& window) = 0;
 };

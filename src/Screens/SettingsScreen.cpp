@@ -4,19 +4,37 @@
 #include "SettingsEventHandler.h"
 #include "../Core/LanguageManager.h"
 #include <iostream>
+#include <AppContext.h>
+
+// في SettingsScreen constructor - تأكد من التهيئة الآمنة:
 
 SettingsScreen::SettingsScreen() {
     try {
         std::cout << "Initializing SettingsScreen..." << std::endl;
 
+        // تهيئة المتغيرات بـ nullptr أولاً
+        m_volumePanel = nullptr;
+        m_languagePanel = nullptr;
+        m_eventHandler = nullptr;
+        m_isInitialized = false;
+
         initializeResources();
         initializeComponents();
-        wireComponents();
 
-        m_isInitialized = true;
-        std::cout << "SettingsScreen initialized successfully" << std::endl;
+        // تحقق من نجاح التهيئة قبل wiring
+        if (m_volumePanel && m_languagePanel) {
+            wireComponents();
+            m_isInitialized = true;
+            std::cout << "SettingsScreen initialized successfully" << std::endl;
+        }
+        else {
+            std::cout << "ERROR: Components not initialized properly!" << std::endl;
+            std::cout << "VolumePanel: " << (m_volumePanel ? "OK" : "NULL") << std::endl;
+            std::cout << "LanguagePanel: " << (m_languagePanel ? "OK" : "NULL") << std::endl;
+        }
     }
     catch (const std::exception& e) {
+        std::cout << "CRITICAL ERROR in SettingsScreen constructor: " << e.what() << std::endl;
         handleInitializationError("SettingsScreen: " + std::string(e.what()));
     }
 }
@@ -32,17 +50,52 @@ SettingsScreen::~SettingsScreen() {
     }
 }
 
-// IScreen interface implementation - متطابق مع Interface الأصلي
 void SettingsScreen::handleEvents(sf::RenderWindow& window) {
-    try {
-        if (m_eventHandler) {
-            m_eventHandler->handleEvents(window);
+    sf::Event event;
+    while (window.pollEvent(event)) {
+        // التعامل مع إغلاق النافذة
+        if (event.type == sf::Event::Closed) {
+            window.close();
+            return;
         }
 
-        checkForScreenTransition();
-    }
-    catch (const std::exception& e) {
-        handleUpdateError("Event handling", e);
+        // التعامل مع ESC
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+            std::cout << "SettingsScreen: ESC pressed, returning to main menu..." << std::endl;
+            AppContext::instance().screenManager().changeScreen(ScreenType::MENU);
+            return;
+        }
+
+        // التحقق الآمن من الـ components قبل استخدامها
+        bool eventHandled = false;
+
+        // التحقق من Language Panel
+        if (m_languagePanel != nullptr) {
+            try {
+                eventHandled = m_languagePanel->handleMouseEvent(event);
+                if (eventHandled) {
+                    std::cout << "Event handled by LanguageControlPanel" << std::endl;
+                }
+            }
+            catch (const std::exception& e) {
+                std::cout << "Error in LanguageControlPanel::handleMouseEvent: " << e.what() << std::endl;
+                eventHandled = false;
+            }
+        }
+
+        // التحقق من Volume Panel
+        if (m_volumePanel != nullptr && !eventHandled) {
+            try {
+                eventHandled = m_volumePanel->handleMouseEvent(event);
+                if (eventHandled) {
+                    std::cout << "Event handled by VolumeControlPanel" << std::endl;
+                }
+            }
+            catch (const std::exception& e) {
+                std::cout << "Error in VolumeControlPanel::handleMouseEvent: " << e.what() << std::endl;
+                eventHandled = false;
+            }
+        }
     }
 }
 
@@ -132,19 +185,50 @@ void SettingsScreen::initializeResources() {
 
 void SettingsScreen::initializeComponents() {
     try {
-        // Create volume control panel
-        m_volumePanel = std::make_shared<VolumeControlPanel>(m_font);
-        std::cout << "Volume control panel created" << std::endl;
+        std::cout << "Creating components..." << std::endl;
 
-        // Create language control panel
-        m_languagePanel = std::make_shared<LanguageControlPanel>(m_font);
-        std::cout << "Language control panel created" << std::endl;
+        // Create volume control panel بحذر
+        try {
+            m_volumePanel = std::make_shared<VolumeControlPanel>(m_font);
+            if (m_volumePanel) {
+                std::cout << "Volume control panel created successfully" << std::endl;
+            }
+            else {
+                std::cout << "ERROR: Volume control panel is null after creation!" << std::endl;
+            }
+        }
+        catch (const std::exception& e) {
+            std::cout << "ERROR creating VolumeControlPanel: " << e.what() << std::endl;
+            m_volumePanel = nullptr;
+        }
+        try {
+            m_languagePanel = std::make_shared<LanguageControlPanel>(m_font);
+            if (m_languagePanel) {
+                std::cout << "Language control panel created successfully" << std::endl;
+            }
+            else {
+                std::cout << "ERROR: Language control panel is null after creation!" << std::endl;
+            }
+        }
+        catch (const std::exception& e) {
+            std::cout << "ERROR creating LanguageControlPanel: " << e.what() << std::endl;
+            m_languagePanel = nullptr;
+        }
 
-        // Create event handler
-        m_eventHandler = std::make_unique<SettingsEventHandler>();
-        std::cout << "Settings event handler created" << std::endl;
+        try {
+            m_eventHandler = std::make_unique<SettingsEventHandler>();
+            if (m_eventHandler) {
+                std::cout << "Settings event handler created successfully" << std::endl;
+            }
+        }
+        catch (const std::exception& e) {
+            std::cout << "ERROR creating SettingsEventHandler: " << e.what() << std::endl;
+            m_eventHandler = nullptr;
+        }
+
     }
     catch (const std::exception& e) {
+        std::cout << "CRITICAL ERROR in initializeComponents: " << e.what() << std::endl;
         throw std::runtime_error("Component initialization failed: " + std::string(e.what()));
     }
 }
@@ -181,7 +265,7 @@ void SettingsScreen::initializeTexts() {
     m_titleText.setFont(m_font);
     m_titleText.setString(lang.getText("settings_title"));
     m_titleText.setCharacterSize(48);
-    m_titleText.setFillColor(sf::Color::Yellow);
+    m_titleText.setFillColor(sf::Color(139, 69, 19));
     m_titleText.setPosition(550, 50);
     m_titleText.setStyle(sf::Text::Bold);
 
@@ -189,7 +273,7 @@ void SettingsScreen::initializeTexts() {
     m_backInstructionText.setFont(m_font);
     m_backInstructionText.setString(lang.getText("settings_back"));
     m_backInstructionText.setCharacterSize(20);
-    m_backInstructionText.setFillColor(sf::Color(180, 180, 180));
+    m_backInstructionText.setFillColor(sf::Color(139, 69, 19));
     m_backInstructionText.setPosition(500, 650);
     m_backInstructionText.setStyle(sf::Text::Italic);
 
@@ -216,7 +300,7 @@ void SettingsScreen::updateAnimation(float deltaTime) {
 
     // Animate title glow effect
     float glowIntensity = 0.7f + 0.3f * sin(m_animationTime * 2.0f);
-    sf::Color titleColor = sf::Color::Yellow;
+    sf::Color titleColor = sf::Color(101, 67, 33); // Dark Brown base color
     titleColor.a = static_cast<sf::Uint8>(255 * glowIntensity);
     m_titleText.setFillColor(titleColor);
 }
@@ -261,7 +345,7 @@ void SettingsScreen::renderBackground(sf::RenderWindow& window) {
 void SettingsScreen::renderScreenTexts(sf::RenderWindow& window) {
     // Draw title with shadow effect
     sf::Text titleShadow = m_titleText;
-    titleShadow.setFillColor(sf::Color(0, 0, 0, 100));
+    titleShadow.setFillColor(sf::Color(50, 33, 17, 120)); // Dark brown shadow
     titleShadow.setPosition(m_titleText.getPosition().x + 3, m_titleText.getPosition().y + 3);
     window.draw(titleShadow);
     window.draw(m_titleText);

@@ -1,23 +1,24 @@
 ﻿#include "../../include/Screens/MenuScreen.h"
 #include "AppContext.h"
 #include "ScreenTypes.h"
+#include "../UI/ObservableButton.h"
+#include "../UI/MenuButtonObserver.h"
 
 MenuScreen::MenuScreen() {
-    // Load background image
+    // Load background image or create fallback gradient
     try {
         m_backgroundTexture = AppContext::instance().resources().getTexture("MenuScreen.png");
         m_backgroundSprite.setTexture(m_backgroundTexture);
 
-        // Scale background to fit window (1600x900)
+        // Scale to fit 1600x900 window
         sf::Vector2u textureSize = m_backgroundTexture.getSize();
         sf::Vector2f targetSize(1600.0f, 900.0f);
-
         float scaleX = targetSize.x / textureSize.x;
         float scaleY = targetSize.y / textureSize.y;
         m_backgroundSprite.setScale(scaleX, scaleY);
     }
     catch (...) {
-        // Fallback: create a gradient background for 1600x900
+        // Fallback: create gradient background
         m_backgroundTexture.create(1600, 900);
         sf::Uint8* pixels = new sf::Uint8[1600 * 900 * 4];
         for (int y = 0; y < 900; y++) {
@@ -39,8 +40,12 @@ MenuScreen::MenuScreen() {
 }
 
 void MenuScreen::setupButtons() {
-    auto& resources = AppContext::instance().resources();
+    std::cout << "Setting up buttons with Factory Pattern..." << std::endl;
 
+    // Create observer for button events
+    m_buttonObserver = std::make_shared<MenuButtonObserver>();
+
+    // Button layout configuration
     const float buttonWidth = 300.0f;
     const float buttonHeight = 100.0f;
     const float buttonSpacing = 150.0f;
@@ -49,85 +54,61 @@ void MenuScreen::setupButtons() {
 
     const float aboutButtonWidth = 130.0f;
     const float aboutButtonHeight = 100.0f;
-    const float aboutButtonX = 30.0f;  // بعيد عن الحافة اليسرى
-    const float aboutButtonY = 650.0f; // بعيد عن الحافة العلوية
+    const float aboutButtonX = 30.0f;
+    const float aboutButtonY = 650.0f;
 
-    struct ButtonData {
-        std::string text;
-        std::string imagePath;
-        sf::Color fallbackColor;
-        sf::Vector2f position;
-        sf::Vector2f size;
-    };
+    // Clear existing buttons
+    m_observableButtons.clear();
 
-    std::vector<ButtonData> buttonData = {
-        // زر About Us في أعلى الشمال
-        {"ABOUT US", "AboutButton.png", sf::Color(150, 100, 200, 255),
-         sf::Vector2f(aboutButtonX, aboutButtonY), sf::Vector2f(aboutButtonWidth, aboutButtonHeight)},
+    // Create buttons using Factory Pattern for consistency
+    std::cout << "Creating buttons using Factory Pattern..." << std::endl;
 
-         // باقي الأزرار في اليمين
-         {"START GAME", "StartButtonEnglish.png", sf::Color(80, 200, 80, 255),
-          sf::Vector2f(centerX, startY), sf::Vector2f(buttonWidth, buttonHeight)},
+    // About Us button
+    auto aboutBtn = ButtonFactory::createAboutButton(
+        sf::Vector2f(aboutButtonX, aboutButtonY),
+        sf::Vector2f(aboutButtonWidth, aboutButtonHeight),
+        m_buttonObserver,
+        m_font
+    );
+    m_observableButtons.push_back(std::move(aboutBtn));
 
-         {"SETTINGS", "SettingsButtonEnglish.png", sf::Color(80, 80, 200, 255),
-          sf::Vector2f(centerX, startY + buttonSpacing), sf::Vector2f(buttonWidth, buttonHeight)},
+    // Start Game button
+    auto startBtn = ButtonFactory::createStartButton(
+        sf::Vector2f(centerX, startY),
+        sf::Vector2f(buttonWidth, buttonHeight),
+        m_buttonObserver,
+        m_font
+    );
+    m_observableButtons.push_back(std::move(startBtn));
 
-         {"HELP", "HelpButtonEnglish.png", sf::Color(200, 200, 80, 255),
-          sf::Vector2f(centerX, startY + 2 * buttonSpacing), sf::Vector2f(buttonWidth, buttonHeight)},
+    // Settings button
+    auto settingsBtn = ButtonFactory::createSettingsButton(
+        sf::Vector2f(centerX, startY + buttonSpacing),
+        sf::Vector2f(buttonWidth, buttonHeight),
+        m_buttonObserver,
+        m_font
+    );
+    m_observableButtons.push_back(std::move(settingsBtn));
 
-         {"EXIT", "ExitButtonEnglish.png", sf::Color(200, 80, 80, 255),
-          sf::Vector2f(centerX, startY + 3 * buttonSpacing), sf::Vector2f(buttonWidth, buttonHeight)}
-    };
+    // Help button
+    auto helpBtn = ButtonFactory::createHelpButton(
+        sf::Vector2f(centerX, startY + 2 * buttonSpacing),
+        sf::Vector2f(buttonWidth, buttonHeight),
+        m_buttonObserver,
+        m_font
+    );
+    m_observableButtons.push_back(std::move(helpBtn));
 
-    m_buttons.clear();
-    m_buttons.reserve(buttonData.size());
+    // Exit button
+    auto exitBtn = ButtonFactory::createExitButton(
+        sf::Vector2f(centerX, startY + 3 * buttonSpacing),
+        sf::Vector2f(buttonWidth, buttonHeight),
+        m_buttonObserver,
+        m_font
+    );
+    m_observableButtons.push_back(std::move(exitBtn));
 
-    for (size_t i = 0; i < buttonData.size(); i++) {
-        Button button(buttonData[i].position, buttonData[i].size, buttonData[i].text);
-        button.setFont(m_font);
-
-        // Try to load image
-        try {
-            sf::Texture& texture = resources.getTexture(buttonData[i].imagePath);
-            button.setButtonImage(&texture);
-            button.setTextColor(sf::Color::Transparent); // Hide text since image has text
-        }
-        catch (...) {
-            // Use colored rectangle fallback
-            button.setBackgroundColor(buttonData[i].fallbackColor);
-            button.setTextColor(sf::Color::White);
-        }
-
-        m_buttons.push_back(button);
-    }
-
-    handleButtonCallbacks();
-}
-
-void MenuScreen::handleButtonCallbacks() {
-    auto& screenManager = AppContext::instance().screenManager();
-
-    if (m_buttons.size() >= 5) {
-        m_buttons[0].setCallback([&screenManager]() {
-            screenManager.changeScreen(ScreenType::ABOUT_US);
-            });
-
-        m_buttons[1].setCallback([&screenManager]() {
-            screenManager.changeScreen(ScreenType::PLAY);
-            });
-
-        m_buttons[2].setCallback([&screenManager]() {
-            screenManager.changeScreen(ScreenType::SETTINGS);
-            });
-
-        m_buttons[3].setCallback([&screenManager]() {
-            screenManager.changeScreen(ScreenType::HELP);
-            });
-
-        m_buttons[4].setCallback([]() {
-            exit(0);
-            });
-    }
+    std::cout << "Created " << m_observableButtons.size() << " buttons using Factory Pattern!" << std::endl;
 }
 
 void MenuScreen::handleEvents(sf::RenderWindow& window) {
@@ -141,21 +122,24 @@ void MenuScreen::handleEvents(sf::RenderWindow& window) {
             window.close();
         }
 
-        // Handle mouse movement for hover effects
+        // Observer Pattern in action - handle button interactions
         if (event.type == sf::Event::MouseMoved) {
-            sf::Vector2f mousePos(event.mouseMove.x, event.mouseMove.y);
-            for (auto& button : m_buttons) {
-                button.handleMouseMove(mousePos);
+            sf::Vector2f mousePos(static_cast<float>(event.mouseMove.x),
+                static_cast<float>(event.mouseMove.y));
+
+            for (auto& button : m_observableButtons) {
+                button->handleMouseMove(mousePos);  // Sends hover notifications
             }
         }
 
         if (event.type == sf::Event::MouseButtonPressed) {
             if (event.mouseButton.button == sf::Mouse::Left) {
-                sf::Vector2f mousePos(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y));
+                sf::Vector2f mousePos(static_cast<float>(event.mouseButton.x),
+                    static_cast<float>(event.mouseButton.y));
 
-                for (auto& button : m_buttons) {
-                    if (button.handleClick(mousePos)) {
-                        break; // Button was clicked, stop checking others
+                for (auto& button : m_observableButtons) {
+                    if (button->handleClick(mousePos)) {  // Sends click notifications
+                        break; // Stop after first button clicked
                     }
                 }
             }
@@ -166,15 +150,15 @@ void MenuScreen::handleEvents(sf::RenderWindow& window) {
 void MenuScreen::update(float deltaTime) {
     m_animationTime += deltaTime;
 
-    // Animate title (gentle glow effect)
+    // Animate title text with glow effect
     float glowIntensity = 0.7f + 0.3f * sin(m_animationTime * 2.0f);
     sf::Color titleColor = sf::Color::Yellow;
     titleColor.a = (sf::Uint8)(255 * glowIntensity);
     m_titleText.setFillColor(titleColor);
 
-    // Update button animations
-    for (auto& button : m_buttons) {
-        button.update(deltaTime);
+    // Update all observable buttons
+    for (auto& button : m_observableButtons) {
+        button->update(deltaTime);
     }
 }
 
@@ -189,18 +173,16 @@ void MenuScreen::render(sf::RenderWindow& window) {
     window.draw(titleShadow);
     window.draw(m_titleText);
 
-    // Draw all buttons
-    for (auto& button : m_buttons) {
-        button.render(window);
+    // Draw all observable buttons
+    for (auto& button : m_observableButtons) {
+        button->render(window);
     }
 }
 
 void MenuScreen::updateSelection(int direction) {
-    // Not needed with simple button class
-    // Keyboard navigation removed for simplicity
+    // Removed for simplicity - using mouse-only navigation
 }
 
 void MenuScreen::selectCurrentButton() {
-    // Not needed with simple button class  
-    // Mouse clicks handle everything now
+    // Removed for simplicity - mouse clicks handle everything
 }

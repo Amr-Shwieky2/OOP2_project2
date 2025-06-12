@@ -1,4 +1,3 @@
-// ============= File: include/UI/Button.h =============
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <string>
@@ -24,16 +23,15 @@ public:
 
     // Events
     bool isMouseOver(const sf::Vector2f& mousePos) const;
-    bool handleClick(const sf::Vector2f& mousePos);
-    void handleMouseMove(const sf::Vector2f& mousePos); // New for hover effects
+    virtual bool handleClick(const sf::Vector2f& mousePos);
+    virtual void handleMouseMove(const sf::Vector2f& mousePos);
 
     // Update and rendering
-    void update(float deltaTime); // New for animations
+    void update(float deltaTime); 
     void render(sf::RenderWindow& window);
 
     // Callback
     void setCallback(std::function<void()> callback);
-
 private:
     sf::RectangleShape m_background;
     sf::Sprite m_sprite;

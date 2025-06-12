@@ -1,5 +1,4 @@
-﻿// src/Core/LanguageManager.cpp - IMPROVED VERSION
-#include "LanguageManager.h"
+﻿#include "LanguageManager.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>

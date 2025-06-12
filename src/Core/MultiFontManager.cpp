@@ -25,43 +25,13 @@ bool MultiFontManager::loadLanguageFonts() {
 
     // Arabic - Try multiple Arabic fonts with various common locations
     if (!loadFontSafely(Language::ARABIC, "NotoSansArabic-Regular.ttf") &&
-        !loadFontSafely(Language::ARABIC, "assets/fonts/NotoSansArabic-Regular.ttf") &&
-        !loadFontSafely(Language::ARABIC, "fonts/NotoSansArabic.ttf") &&
-        !loadFontSafely(Language::ARABIC, "assets/fonts/NotoSansArabic.ttf") &&
-        !loadFontSafely(Language::ARABIC, "fonts/Arial_Unicode_MS.ttf") &&
-        !loadFontSafely(Language::ARABIC, "assets/fonts/Arial_Unicode_MS.ttf") &&
-        !loadFontSafely(Language::ARABIC, "fonts/Tahoma.ttf") &&
-        !loadFontSafely(Language::ARABIC, "Tahoma.ttf") &&
-        !loadFontSafely(Language::ARABIC, "fonts/Amiri-Regular.ttf") &&
-        !loadFontSafely(Language::ARABIC, "assets/fonts/Amiri-Regular.ttf") &&
-        !loadFontSafely(Language::ARABIC, "fonts/Scheherazade-Regular.ttf") &&
-        !loadFontSafely(Language::ARABIC, "assets/fonts/Scheherazade-Regular.ttf")) {
-
-        std::cout << "Warning: No Arabic font found. Arabic text may display as squares." << std::endl;
-        std::cout << "Please download and place one of these fonts in fonts/ or assets/fonts/:" << std::endl;
-        std::cout << "  - NotoSansArabic-Regular.ttf (recommended)" << std::endl;
-        std::cout << "  - Amiri-Regular.ttf" << std::endl;
-        std::cout << "  - Scheherazade-Regular.ttf" << std::endl;
+        !loadFontSafely(Language::ARABIC, "Tahoma.ttf")) {
         success = false;
     }
 
     // Hebrew - Try multiple Hebrew fonts
     if (!loadFontSafely(Language::HEBREW, "NotoSansHebrew-Regular.ttf") &&
-        !loadFontSafely(Language::HEBREW, "assets/fonts/NotoSansHebrew-Regular.ttf") &&
-        !loadFontSafely(Language::HEBREW, "fonts/NotoSansHebrew.ttf") &&
-        !loadFontSafely(Language::HEBREW, "assets/fonts/NotoSansHebrew.ttf") &&
-        !loadFontSafely(Language::HEBREW, "fonts/David.ttf") &&
-        !loadFontSafely(Language::HEBREW, "assets/fonts/David.ttf") &&
-        !loadFontSafely(Language::HEBREW, "fonts/FrankRuehl.ttf") &&
-        !loadFontSafely(Language::HEBREW, "assets/fonts/FrankRuehl.ttf") &&
-        !loadFontSafely(Language::HEBREW, "fonts/Arial_Unicode_MS.ttf") &&
-        !loadFontSafely(Language::HEBREW, "assets/fonts/Arial_Unicode_MS.ttf")) {
-
-        std::cout << "Warning: No Hebrew font found. Hebrew text may display as squares." << std::endl;
-        std::cout << "Please download and place one of these fonts in fonts/ or assets/fonts/:" << std::endl;
-        std::cout << "  - NotoSansHebrew-Regular.ttf (recommended)" << std::endl;
-        std::cout << "  - David.ttf" << std::endl;
-        std::cout << "  - FrankRuehl.ttf" << std::endl;
+        !loadFontSafely(Language::HEBREW, "David.ttf")) {
         success = false;
     }
 
@@ -85,19 +55,17 @@ bool MultiFontManager::loadFontSafely(Language language, const std::string& font
     auto font = std::make_unique<sf::Font>();
     if (font->loadFromFile(fontPath)) {
         m_languageFonts[language] = std::move(font);
-        std::cout << "✓ Loaded font for " << getLanguageNameSafe(language) << ": " << fontPath << std::endl;
+        std::cout << "Loaded font for " << getLanguageNameSafe(language) << ": " << fontPath << std::endl;
         return true;
     }
 
-    std::cout << "✗ Failed to load font: " << fontPath << std::endl;
+    std::cout << "Failed to load font: " << fontPath << std::endl;
     return false;
 }
 
 void MultiFontManager::setupFallbackFont() {
     // Try to load a basic fallback font
-    if (!m_fallbackFont.loadFromFile("arial.ttf") &&
-        !m_fallbackFont.loadFromFile("assets/fonts/arial.ttf") &&
-        !m_fallbackFont.loadFromFile("arial.ttf")) {
+    if (!m_fallbackFont.loadFromFile("arial.ttf")) {
         // If no external font, we'll use SFML's default font
         std::cout << "Using SFML default font as fallback" << std::endl;
     }

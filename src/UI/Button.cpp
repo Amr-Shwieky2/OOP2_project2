@@ -1,4 +1,3 @@
-// ============= File: src/UI/Button.cpp =============
 #include "Button.h"
 
 Button::Button() {

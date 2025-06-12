@@ -1,11 +1,15 @@
-﻿// إصلاح في include/UI/Dropdown.h
-
-#pragma once
+﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <string>
 #include <functional>
 
+/**
+ * @brief Interactive dropdown menu UI component
+ *
+ * Provides a clickable dropdown with multiple options.
+ * Supports mouse interaction, selection callbacks, and visual feedback.
+ */
 class Dropdown {
 public:
     Dropdown(sf::Vector2f position, sf::Vector2f size, const sf::Font& font);

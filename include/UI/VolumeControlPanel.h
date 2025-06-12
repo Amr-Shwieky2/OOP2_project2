@@ -59,8 +59,8 @@ private:
     bool m_hasChanged = false;
 
     // Visual styling
-    sf::Color m_labelColor = sf::Color::White;
-    sf::Color m_valueColor = sf::Color::Yellow;
+    sf::Color m_labelColor = sf::Color(160, 82, 45);  // Saddle Brown
+    sf::Color m_valueColor = sf::Color(139, 69, 19);  // Dark Brown
 
     // Setup methods - each with single purpose
     void setupMasterVolumeSlider(const sf::Font& font);

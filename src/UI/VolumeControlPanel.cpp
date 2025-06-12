@@ -15,7 +15,7 @@ VolumeControlPanel::VolumeSlider::VolumeSlider(const std::string& labelText,
     label.setFont(font);
     label.setString(labelText);
     label.setCharacterSize(28);
-    label.setFillColor(sf::Color::White);
+    label.setFillColor(sf::Color(139, 69, 19));
     label.setPosition(position);
 
     // Setup slider
@@ -25,7 +25,7 @@ VolumeControlPanel::VolumeSlider::VolumeSlider(const std::string& labelText,
     // Setup value text
     value.setFont(font);
     value.setCharacterSize(24);
-    value.setFillColor(sf::Color::Yellow);
+    value.setFillColor(sf::Color(139, 69, 19));
     value.setPosition(position.x + 470, position.y + 5);
 
     updateValueText();

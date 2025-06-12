@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <vector>
@@ -59,10 +59,10 @@ private:
     bool m_hasChanged = false;
 
     // Visual styling
-    sf::Color m_labelColor = sf::Color::White;
-    sf::Color m_dropdownBackgroundColor = sf::Color(70, 70, 70);
-    sf::Color m_dropdownTextColor = sf::Color::White;
-    sf::Color m_dropdownHighlightColor = sf::Color(100, 150, 255);
+    sf::Color m_labelColor = sf::Color(139, 69, 19);              // Saddle Brown للتسمية
+    sf::Color m_dropdownBackgroundColor = sf::Color(245, 245, 220); // Beige للخلفية
+    sf::Color m_dropdownTextColor = sf::Color(139, 69, 19);       // Dark Brown للنص
+    sf::Color m_dropdownHighlightColor = sf::Color(210, 180, 140); // Tan للتمييز
 
     // Setup methods
     void setupLanguageOptions();
