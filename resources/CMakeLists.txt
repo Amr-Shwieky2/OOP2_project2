@@ -27,7 +27,12 @@ configure_file ("./icons/ReverseMovementGift.png" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("./icons/SpeedGift.png" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("./icons/SquareEnemy.png" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("./icons/TransparentBall.png" ${CMAKE_BINARY_DIR} COPYONLY)
-
+configure_file ("./icons/right.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/left.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/middle.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/left edge.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/right edge.png" ${CMAKE_BINARY_DIR} COPYONLY)
+configure_file ("./icons/background.png" ${CMAKE_BINARY_DIR} COPYONLY)
 
 configure_file ("./fonts/arial.ttf" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("./fonts/Tahoma.ttf" ${CMAKE_BINARY_DIR} COPYONLY)
