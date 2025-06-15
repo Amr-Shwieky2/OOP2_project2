@@ -2,6 +2,7 @@
 #include "AppContext.h"
 #include "ScreenTypes.h"
 #include <iostream>
+#include "AudioManager.h"
 
 AboutScreen::AboutScreen() {
     try {

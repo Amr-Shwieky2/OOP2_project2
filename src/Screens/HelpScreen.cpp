@@ -1,6 +1,7 @@
 ﻿#include "../../include/Screens/HelpScreen.h"
 #include "AppContext.h"
 #include "ScreenTypes.h"
+#include "AudioManager.h"
 
 HelpScreen::HelpScreen() {
     // تحميل صورة الخلفية فقط

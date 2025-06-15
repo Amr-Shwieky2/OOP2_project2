@@ -5,6 +5,7 @@
 #include "../Core/LanguageManager.h"
 #include <iostream>
 #include <AppContext.h>
+#include "AudioManager.h"
 
 // في SettingsScreen constructor - تأكد من التهيئة الآمنة:
 

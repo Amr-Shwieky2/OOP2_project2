@@ -3,6 +3,7 @@
 #include "ScreenTypes.h"
 #include "../UI/ObservableButton.h"
 #include "../UI/MenuButtonObserver.h"
+#include "AudioManager.h"
 
 MenuScreen::MenuScreen() {
     // Load background image or create fallback gradient
@@ -35,7 +36,6 @@ MenuScreen::MenuScreen() {
         m_backgroundSprite.setTexture(m_backgroundTexture);
         delete[] pixels;
     }
-
     setupButtons();
 }
 

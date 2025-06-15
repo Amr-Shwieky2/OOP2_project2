@@ -1,10 +1,11 @@
-#include "AudioManager.h"
+﻿#include "AudioManager.h"
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 
 // Singleton instance getter
 AudioManager& AudioManager::instance() {
-    static AudioManager instance;  // Thread-safe in C++11+
+    static AudioManager instance;
     return instance;
 }
 
@@ -117,6 +118,135 @@ void AudioManager::playSound(const std::string& name) {
     }
 }
 
+// Load all menu sounds
+bool AudioManager::loadMenuSounds() {
+    if (m_menuSoundsLoaded) {
+        return true;
+    }
+
+    bool allLoaded = true;
+    const std::string soundFile = "intro.wav";
+
+    // Load sound for each menu screen
+    allLoaded &= loadSound("menu_music", soundFile);
+    allLoaded &= loadSound("loading_music", soundFile);
+    allLoaded &= loadSound("settings_music", soundFile);
+    allLoaded &= loadSound("help_music", soundFile);
+    allLoaded &= loadSound("about_music", soundFile);
+    allLoaded &= loadSound("button_hover", soundFile);
+    allLoaded &= loadSound("button_click", soundFile);
+
+    m_menuSoundsLoaded = allLoaded;
+    return allLoaded;
+}
+
+// Menu sound playback functions
+void AudioManager::playMenuSound() {
+    if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
+        auto it = m_sounds.find("menu_music");
+        if (it != m_sounds.end()) {
+            it->second.setVolume(getEffectiveMenuVolume());
+            it->second.play();
+        }
+    }
+}
+
+void AudioManager::playLoadingSound() {
+    if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
+        auto it = m_sounds.find("loading_music");
+        if (it != m_sounds.end()) {
+            it->second.setVolume(getEffectiveMenuVolume());
+            it->second.play();
+        }
+    }
+}
+
+void AudioManager::playSettingsSound() {
+    if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
+        auto it = m_sounds.find("settings_music");
+        if (it != m_sounds.end()) {
+            it->second.setVolume(getEffectiveMenuVolume());
+            it->second.play();
+        }
+    }
+}
+
+void AudioManager::playHelpSound() {
+    if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
+        auto it = m_sounds.find("help_music");
+        if (it != m_sounds.end()) {
+            it->second.setVolume(getEffectiveMenuVolume());
+            it->second.play();
+        }
+    }
+}
+
+void AudioManager::playAboutSound() {
+    if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
+        auto it = m_sounds.find("about_music");
+        if (it != m_sounds.end()) {
+            it->second.setVolume(getEffectiveMenuVolume());
+            it->second.play();
+        }
+    }
+}
+
+void AudioManager::playButtonHoverSound() {
+    if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
+        auto it = m_sounds.find("button_hover");
+        if (it != m_sounds.end()) {
+            // Lower volume for hover effect
+            it->second.setVolume(getEffectiveMenuVolume() * 0.5f);
+            it->second.play();
+        }
+    }
+}
+
+void AudioManager::playButtonClickSound() {
+    if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
+        auto it = m_sounds.find("button_click");
+        if (it != m_sounds.end()) {
+            it->second.setVolume(getEffectiveMenuVolume());
+            it->second.play();
+        }
+    }
+}
+
+// Menu sound controls
+void AudioManager::enableMenuSounds(bool enable) {
+    m_menuSoundsEnabled = enable;
+    saveSettings();
+}
+
+void AudioManager::setMenuSoundVolume(float volume) {
+    m_menuSoundVolume = std::max(0.0f, std::min(100.0f, volume));
+    saveSettings();
+}
+
+// System controls
+void AudioManager::stopAllSounds() {
+    // Stop all sound effects
+    for (auto& sound : m_sounds) {
+        sound.second.stop();
+    }
+
+    // Stop music
+    stopMusic();
+}
+
+void AudioManager::resetAudioSystem() {
+    stopAllSounds();
+
+    // Reset all volume settings to defaults
+    m_masterVolume = 100.0f;
+    m_musicVolume = 100.0f;
+    m_sfxVolume = 100.0f;
+    m_menuSoundVolume = 100.0f;
+    m_menuSoundsEnabled = true;
+
+    saveSettings();
+}
+
 // Update volume of currently playing music
 void AudioManager::updateMusicVolume() {
     if (m_currentMusic) {
@@ -137,6 +267,12 @@ float AudioManager::getEffectiveVolume(float baseVolume) const {
     return (baseVolume / 100.0f) * (m_masterVolume / 100.0f) * 100.0f;
 }
 
+// Calculate effective menu sound volume
+float AudioManager::getEffectiveMenuVolume() const {
+    // Menu sounds are affected by: menu volume -> SFX volume -> master volume
+    return (m_menuSoundVolume / 100.0f) * (m_sfxVolume / 100.0f) * (m_masterVolume / 100.0f) * 100.0f;
+}
+
 // Save current volume settings to file
 void AudioManager::saveSettings() {
     std::ofstream file("settings.txt");
@@ -144,10 +280,16 @@ void AudioManager::saveSettings() {
         file << "master_volume=" << m_masterVolume << std::endl;
         file << "music_volume=" << m_musicVolume << std::endl;
         file << "sfx_volume=" << m_sfxVolume << std::endl;
+        file << "menu_sounds_enabled=" << (m_menuSoundsEnabled ? 1 : 0) << std::endl;
+        file << "menu_sound_volume=" << m_menuSoundVolume << std::endl;
+        file.close();
+    }
+    else {
+        std::cerr << "Failed to save audio settings" << std::endl;
     }
 }
 
-// Load volume settings from file (called in constructor)
+// Load volume settings from file
 void AudioManager::loadSettings() {
     std::ifstream file("settings.txt");
     if (!file.is_open()) {
@@ -160,18 +302,30 @@ void AudioManager::loadSettings() {
         size_t pos = line.find('=');
         if (pos != std::string::npos) {
             std::string key = line.substr(0, pos);
-            float value = std::stof(line.substr(pos + 1));
+            std::string valueStr = line.substr(pos + 1);
 
-            // Apply loaded values
-            if (key == "master_volume") {
-                m_masterVolume = value;
+            try {
+                // Apply loaded values
+                if (key == "master_volume") {
+                    m_masterVolume = std::stof(valueStr);
+                }
+                else if (key == "music_volume") {
+                    m_musicVolume = std::stof(valueStr);
+                }
+                else if (key == "sfx_volume") {
+                    m_sfxVolume = std::stof(valueStr);
+                }
+                else if (key == "menu_sounds_enabled") {
+                    m_menuSoundsEnabled = (std::stoi(valueStr) == 1);
+                }
+                else if (key == "menu_sound_volume") {
+                    m_menuSoundVolume = std::stof(valueStr);
+                }
             }
-            else if (key == "music_volume") {
-                m_musicVolume = value;
-            }
-            else if (key == "sfx_volume") {
-                m_sfxVolume = value;
+            catch (const std::exception& e) {
+                std::cerr << "Error parsing setting " << key << ": " << e.what() << std::endl;
             }
         }
     }
+    file.close();
 }
