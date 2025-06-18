@@ -1,4 +1,5 @@
-﻿/**
+﻿
+/**
  * @brief Central application context using Singleton pattern for service management
  *
  * AppContext provides a single access point to all application services and manages
@@ -6,46 +7,57 @@
  * automatic memory management using smart pointers.
  *
  * Services managed:
- * - AudioService: Audio and music management
- * - ResourceLoader: General resource loading
+ * - TextureLoader: Image and texture management
+ * - FontLoader: Font resource management
+ * - SoundLoader: Sound effect management
  * - ScreenManager: Screen and UI management
- * - TextureManager: Image and texture management
- * - FontManager: Font resource management
- * - SoundManager: Sound effect management
+ * - CommandInvoker: Command pattern execution
  *
  * Usage: AppContext::instance().serviceName().method()
  */
 #pragma once
 #include <memory>
-#include "AudioService.h"
-#include "ResourceLoader.h"
+#include "ResourceLoader.h"  // Template version
 #include "ScreenManager.h"
-#include "ResourceManager.h"  
+#include <CommandInvoker.h>
 
 class AppContext {
 public:
     static AppContext& instance();
-    AudioService& audio();
-    ResourceLoader& resources();
-    ScreenManager& screenManager();
 
-    //Resource Managers only
-    TextureManager& textures();
-    FontManager& fonts();
-    SoundManager& sounds();
+    // Template-based resource loaders
+    TextureLoader& textures();
+    FontLoader& fonts();
+    SoundLoader& sounds();
+
+    // Other services
+    ScreenManager& screenManager();
+    CommandInvoker& commandInvoker();
+
+    // Backward compatibility methods (optional - for easy migration)
+    sf::Texture& getTexture(const std::string& filename) {
+        return textures().getResource(filename);
+    }
+
+    sf::Font& getFont(const std::string& filename) {
+        return fonts().getResource(filename);
+    }
+
+    sf::SoundBuffer& getSound(const std::string& filename) {
+        return sounds().getResource(filename);
+    }
 
 private:
     AppContext();
     AppContext(const AppContext&) = delete;
     AppContext& operator=(const AppContext&) = delete;
 
-    // Existing services (unchanged)
-    std::unique_ptr<AudioService> m_audioService;
-    std::unique_ptr<ResourceLoader> m_resourceLoader;
-    std::unique_ptr<ScreenManager> m_screenManager;
+    // Template-based resource loaders
+    std::unique_ptr<TextureLoader> m_textureLoader;
+    std::unique_ptr<FontLoader> m_fontLoader;
+    std::unique_ptr<SoundLoader> m_soundLoader;
 
-    // Resource Managers only
-    std::unique_ptr<TextureManager> m_textureManager;
-    std::unique_ptr<FontManager> m_fontManager;
-    std::unique_ptr<SoundManager> m_soundManager;
+    // Other services
+    std::unique_ptr<ScreenManager> m_screenManager;
+    std::unique_ptr<CommandInvoker> m_commandInvoker;
 };

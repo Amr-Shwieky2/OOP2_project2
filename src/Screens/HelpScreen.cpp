@@ -6,7 +6,7 @@
 HelpScreen::HelpScreen() {
     // تحميل صورة الخلفية فقط
     try {
-        m_backgroundTexture = AppContext::instance().resources().getTexture("HelpScreen.png");
+        m_backgroundTexture = AppContext::instance().getTexture("HelpScreen.png");
         m_backgroundSprite.setTexture(m_backgroundTexture);
 
         // تكبير الصورة لتملأ الشاشة (1400x800)

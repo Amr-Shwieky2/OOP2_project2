@@ -1,6 +1,6 @@
-﻿#include "../../include/Commands/ChangeScreenCommand.h"
-#include "../../include/Application/AppContext.h"
+﻿#include "../../include/Application/AppContext.h"
 #include <iostream>
+#include "../../include/Commands/ChangeScreenCommand.h"
 
 /**
  * @brief Constructor - Initialize the command with source and target screens

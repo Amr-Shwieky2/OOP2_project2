@@ -117,7 +117,7 @@ void ButtonFactory::setupButton(
 
     // Try to load texture, fallback to solid color
     try {
-        auto& texture = AppContext::instance().resources().getTexture(texturePath);
+        auto& texture = AppContext::instance().getTexture(texturePath);
         button.setButtonImage(&texture);
         button.setTextColor(sf::Color::Transparent);
         std::cout << "Factory: Loaded texture '" << texturePath << "'" << std::endl;

@@ -6,7 +6,7 @@
 LoadingScreen::LoadingScreen() {
     // Load background image using ResourceLoader
     try {
-        m_backgroundTexture = AppContext::instance().resources().getTexture("LoadingScreen.png");
+        m_backgroundTexture = AppContext::instance().getTexture("LoadingScreen.png");
         m_backgroundSprite.setTexture(m_backgroundTexture);
 
         // Scale background to fit window

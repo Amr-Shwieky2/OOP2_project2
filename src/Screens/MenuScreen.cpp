@@ -8,7 +8,7 @@
 MenuScreen::MenuScreen() {
     // Load background image or create fallback gradient
     try {
-        m_backgroundTexture = AppContext::instance().resources().getTexture("MenuScreen.png");
+        m_backgroundTexture = AppContext::instance().getTexture("MenuScreen.png");
         m_backgroundSprite.setTexture(m_backgroundTexture);
 
         // Scale to fit 1600x900 window

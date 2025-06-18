@@ -1,10 +1,10 @@
-﻿#include "AudioManager.h"
-#include <fstream>
+﻿#include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <AudioManager.h>
 
 // Singleton instance getter
-AudioManager& AudioManager::instance() {
+AudioManager & AudioManager::instance() {
     static AudioManager instance;
     return instance;
 }
@@ -62,6 +62,7 @@ void AudioManager::playMusic(const std::string& name, bool loop) {
     if (it != m_music.end()) {
         // Stop current music if any
         if (m_currentMusic) {
+            std::cout << "Stopping previous music..." << std::endl;
             m_currentMusic->stop();
         }
 
@@ -70,6 +71,7 @@ void AudioManager::playMusic(const std::string& name, bool loop) {
         m_currentMusic->setLoop(loop);
         m_currentMusic->setVolume(getEffectiveVolume(m_musicVolume));
         m_currentMusic->play();
+        std::cout << "Playing new music: " << name << " (loop: " << (loop ? "yes" : "no") << ")" << std::endl;
     }
 }
 
@@ -118,79 +120,70 @@ void AudioManager::playSound(const std::string& name) {
     }
 }
 
-// Load all menu sounds
+// MODIFIED: Load all menu sounds as music for looping
 bool AudioManager::loadMenuSounds() {
     if (m_menuSoundsLoaded) {
         return true;
     }
 
+    std::cout << "Loading menu sounds for looping..." << std::endl;
+
     bool allLoaded = true;
     const std::string soundFile = "intro.wav";
 
-    // Load sound for each menu screen
-    allLoaded &= loadSound("menu_music", soundFile);
-    allLoaded &= loadSound("loading_music", soundFile);
-    allLoaded &= loadSound("settings_music", soundFile);
-    allLoaded &= loadSound("help_music", soundFile);
-    allLoaded &= loadSound("about_music", soundFile);
+    // Load as music for looping capability
+    allLoaded &= loadMusic("menu_music", soundFile);
+    allLoaded &= loadMusic("loading_music", soundFile);
+    allLoaded &= loadMusic("settings_music", soundFile);
+    allLoaded &= loadMusic("help_music", soundFile);
+    allLoaded &= loadMusic("about_music", soundFile);
+
+    // Keep button sounds as regular sounds (no looping needed)
     allLoaded &= loadSound("button_hover", soundFile);
     allLoaded &= loadSound("button_click", soundFile);
 
     m_menuSoundsLoaded = allLoaded;
+    std::cout << "Menu sounds loaded: " << (allLoaded ? "Success" : "Failed") << std::endl;
     return allLoaded;
 }
 
-// Menu sound playback functions
+// MODIFIED: Menu sound playback functions now use looping music
 void AudioManager::playMenuSound() {
     if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
-        auto it = m_sounds.find("menu_music");
-        if (it != m_sounds.end()) {
-            it->second.setVolume(getEffectiveMenuVolume());
-            it->second.play();
-        }
+        std::cout << "Playing menu music with loop..." << std::endl;
+        playMusic("menu_music", true); // true = loop
     }
 }
 
 void AudioManager::playLoadingSound() {
     if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
-        auto it = m_sounds.find("loading_music");
-        if (it != m_sounds.end()) {
-            it->second.setVolume(getEffectiveMenuVolume());
-            it->second.play();
-        }
+        std::cout << "Playing loading music with loop..." << std::endl;
+        playMusic("loading_music", true); // true = loop
     }
 }
 
 void AudioManager::playSettingsSound() {
     if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
-        auto it = m_sounds.find("settings_music");
-        if (it != m_sounds.end()) {
-            it->second.setVolume(getEffectiveMenuVolume());
-            it->second.play();
-        }
+        std::cout << "Playing settings music with loop..." << std::endl;
+        playMusic("settings_music", true); // true = loop
     }
 }
 
 void AudioManager::playHelpSound() {
     if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
-        auto it = m_sounds.find("help_music");
-        if (it != m_sounds.end()) {
-            it->second.setVolume(getEffectiveMenuVolume());
-            it->second.play();
-        }
+        std::cout << "Playing help music with loop..." << std::endl;
+        playMusic("help_music", true); // true = loop
     }
 }
 
 void AudioManager::playAboutSound() {
     if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
-        auto it = m_sounds.find("about_music");
-        if (it != m_sounds.end()) {
-            it->second.setVolume(getEffectiveMenuVolume());
-            it->second.play();
-        }
+        std::cout << "Playing about music with loop..." << std::endl;
+        playMusic("about_music", true); // true = loop
     }
 }
 
+// Button sounds remain as sf::Sound (no looping needed)
 void AudioManager::playButtonHoverSound() {
     if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
         auto it = m_sounds.find("button_hover");
