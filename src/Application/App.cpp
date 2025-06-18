@@ -9,7 +9,6 @@
 // Include screen files
 #include "../Screens/LoadingScreen.h"
 #include "../Screens/MenuScreen.h"
-#include "../Screens/GameplayScreen.h"
 #include "../Screens/SettingsScreen.h"
 #include "../Screens/AboutScreen.h"
 #include "../../include/Screens/HelpScreen.h"
@@ -48,10 +47,6 @@ void App::initialize() {
 
     screenManager.registerScreen(ScreenType::MENU, []() {
         return std::make_unique<MenuScreen>();
-        });
-
-    screenManager.registerScreen(ScreenType::PLAY, []() {
-        return std::make_unique<GameplayScreen>();
         });
 
     screenManager.registerScreen(ScreenType::SETTINGS, []() {

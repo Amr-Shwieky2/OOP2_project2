@@ -15,7 +15,6 @@ endif()
 add_subdirectory (include)
 add_subdirectory (src)
 add_subdirectory (resources)
-add_subdirectory (external/box2d/src)
 
 include (cmake/Zip.cmake)
 
@@ -33,7 +32,6 @@ target_link_libraries (${CMAKE_PROJECT_NAME}
     sfml-audio         
     sfml-main
 )
-target_link_libraries (${CMAKE_PROJECT_NAME} box2d)
 
 include (cmake/SFML.cmake)
 

@@ -6,7 +6,7 @@
 
 AboutScreen::AboutScreen() {
     try {
-        m_backgroundTexture = AppContext::instance().resources().getTexture("About_UsScreen.png");
+        m_backgroundTexture = AppContext::instance().getTexture("About_UsScreen.png");
         m_backgroundSprite.setTexture(m_backgroundTexture);
 
         sf::Vector2u textureSize = m_backgroundTexture.getSize();
