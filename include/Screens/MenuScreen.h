@@ -1,7 +1,10 @@
 #pragma once
 
 #include "../Core/IScreen.h"
+#include "../UI/ObservableButton.h"
+#include "../UI/MenuButtonObserver.h"
 #include "../UI/Button.h"
+#include "../UI/ButtonFactory.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <Button.h>
@@ -31,9 +34,11 @@ private:
     // Animation and effects
     float m_animationTime = 0.0f;
 
+    std::vector<std::unique_ptr<ObservableButton>> m_observableButtons;
+    std::shared_ptr<MenuButtonObserver> m_buttonObserver;
+
     // Private helper methods
     void setupButtons();
     void updateSelection(int direction);
     void selectCurrentButton();
-    void handleButtonCallbacks();
 };

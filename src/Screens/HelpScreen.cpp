@@ -1,36 +1,28 @@
-#include "../../include/Screens/HelpScreen.h"
+﻿#include "../../include/Screens/HelpScreen.h"
 #include "AppContext.h"
 #include "ScreenTypes.h"
+#include "AudioManager.h"
 
 HelpScreen::HelpScreen() {
-    // Setup font
+    // تحميل صورة الخلفية فقط
     try {
-        m_font.loadFromFile("assets/fonts/arial.ttf");
+        m_backgroundTexture = AppContext::instance().resources().getTexture("HelpScreen.png");
+        m_backgroundSprite.setTexture(m_backgroundTexture);
+
+        // تكبير الصورة لتملأ الشاشة (1400x800)
+        sf::Vector2u textureSize = m_backgroundTexture.getSize();
+        if (textureSize.x > 0 && textureSize.y > 0) {
+            sf::Vector2f targetSize(1400.0f, 800.0f);
+            float scaleX = targetSize.x / textureSize.x;
+            float scaleY = targetSize.y / textureSize.y;
+            m_backgroundSprite.setScale(scaleX, scaleY);
+        }
+
+        std::cout << "Help screen image loaded successfully: HelpScreen.png" << std::endl;
     }
     catch (...) {
-        // Default font
+        std::cout << "Error: Could not load HelpScreen.png!" << std::endl;
     }
-
-    // Title
-    m_titleText.setFont(m_font);
-    m_titleText.setString("Help");
-    m_titleText.setCharacterSize(48);
-    m_titleText.setFillColor(sf::Color::Yellow);
-    m_titleText.setPosition(350, 100);
-
-    // Help content
-    m_helpText.setFont(m_font);
-    m_helpText.setString("How to play:\n\n- Use Arrow Keys to navigate menus\n- Press Enter to select\n- Use A/D keys to move in game\n- Press ESC to go back");
-    m_helpText.setCharacterSize(24);
-    m_helpText.setFillColor(sf::Color::White);
-    m_helpText.setPosition(200, 200);
-
-    // Back instruction
-    m_backText.setFont(m_font);
-    m_backText.setString("Press ESC to go back");
-    m_backText.setCharacterSize(20);
-    m_backText.setFillColor(sf::Color(128, 128, 128)); // Use RGB values for gray color
-    m_backText.setPosition(300, 500);
 }
 
 void HelpScreen::handleEvents(sf::RenderWindow& window) {
@@ -45,15 +37,18 @@ void HelpScreen::handleEvents(sf::RenderWindow& window) {
                 AppContext::instance().screenManager().changeScreen(ScreenType::MENU);
             }
         }
+
+        if (event.type == sf::Event::MouseButtonPressed) {
+            if (event.mouseButton.button == sf::Mouse::Left) {
+                AppContext::instance().screenManager().changeScreen(ScreenType::MENU);
+            }
+        }
     }
 }
 
 void HelpScreen::update(float deltaTime) {
-    // Help screen logic here
 }
 
 void HelpScreen::render(sf::RenderWindow& window) {
-    window.draw(m_titleText);
-    window.draw(m_helpText);
-    window.draw(m_backText);
+    window.draw(m_backgroundSprite);
 }

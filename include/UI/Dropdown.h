@@ -1,15 +1,20 @@
-#pragma once
-
+﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <string>
 #include <functional>
 
+/**
+ * @brief Interactive dropdown menu UI component
+ *
+ * Provides a clickable dropdown with multiple options.
+ * Supports mouse interaction, selection callbacks, and visual feedback.
+ */
 class Dropdown {
 public:
     Dropdown(sf::Vector2f position, sf::Vector2f size, const sf::Font& font);
 
-    void addOption(const std::string& text, int value);
+    void addOption(const sf::String& text, int value);
     void setSelectedIndex(int index);
     int getSelectedIndex() const { return m_selectedIndex; }
     int getSelectedValue() const;
@@ -26,7 +31,7 @@ public:
 
 private:
     struct Option {
-        std::string text;
+        sf::String text;  
         int value;
     };
 

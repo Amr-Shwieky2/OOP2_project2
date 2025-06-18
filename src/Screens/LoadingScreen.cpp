@@ -1,6 +1,7 @@
 #include "AppContext.h"
 #include "ScreenTypes.h"
 #include "../../include/Screens/LoadingScreen.h"
+#include "AudioManager.h"
 
 LoadingScreen::LoadingScreen() {
     // Load background image using ResourceLoader
@@ -31,6 +32,7 @@ LoadingScreen::LoadingScreen() {
         m_backgroundSprite.setTexture(m_backgroundTexture);
         delete[] pixels;
     }
+    AudioManager::instance().playLoadingSound();
 }
 
 void LoadingScreen::handleEvents(sf::RenderWindow& window) {

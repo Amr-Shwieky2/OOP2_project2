@@ -6,13 +6,14 @@
 
 enum class Language {
     ENGLISH,
-    HEBREW,
-    ARABIC
+    ARABIC,
+    HEBREW
 };
 
 class LanguageManager {
 public:
     static LanguageManager& instance();
+    LanguageManager() = default;
 
     void setLanguage(Language lang);
     Language getCurrentLanguage() const { return m_currentLanguage; }
@@ -21,8 +22,6 @@ public:
     void loadLanguageFile(Language lang, const std::string& filePath);
 
 private:
-    LanguageManager() = default;
-
     Language m_currentLanguage = Language::ENGLISH;
     std::unordered_map<Language, std::unordered_map<std::string, std::string>> m_texts;
 

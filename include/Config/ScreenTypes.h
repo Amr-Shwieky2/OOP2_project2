@@ -9,5 +9,6 @@ enum class ScreenType {
 	SETTINGS,
 	GAMEOVER,
 	WINNING,
-	ABOUT_US
+	ABOUT_US,
+	PAUSE
 };

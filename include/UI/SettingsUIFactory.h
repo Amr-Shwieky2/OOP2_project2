@@ -1,9 +1,10 @@
 #pragma once
-#include <memory>
 #include <SFML/Graphics.hpp>
-#include "Slider.h"
-#include "Dropdown.h"
+#include <memory>
 #include "../Core/UITheme.h"
+#include "../Core/LanguageManager.h"  // Add this include
+#include "Dropdown.h"
+#include "Slider.h"
 
 class SettingsUIFactory {
 public:
@@ -13,34 +14,48 @@ public:
         sf::Text value;
     };
 
-    static VolumeControls createVolumeControl(
-        const std::string& labelText,
+    // Existing functions (keep as they are)
+    static sf::Text createTitle(const sf::String& text, sf::Vector2f position,
+        const sf::Font& font, const UITheme::Colors& colors);
+
+    static sf::Text createLabel(const sf::String& text, sf::Vector2f position,
+        const sf::Font& font, const UITheme::Colors& colors,
+        int characterSize = 28);
+
+    static VolumeControls createVolumeControl(const sf::String& labelText,
         sf::Vector2f position,
         const sf::Font& font,
         const UITheme::Colors& colors,
         const UITheme::Layout& layout,
-        float currentValue
-    );
+        float initialValue = 100.0f);
 
-    static std::unique_ptr<Dropdown> createLanguageDropdown(
-        sf::Vector2f position,
+    static std::unique_ptr<Dropdown> createLanguageDropdown(sf::Vector2f position,
         const sf::Font& font,
         const UITheme::Colors& colors,
-        const UITheme::Layout& layout
-    );
+        const UITheme::Layout& layout);
 
-    static sf::Text createLabel(
-        const sf::String& text,
+    // NEW FUNCTIONS - Add these to your existing header:
+
+    // Create text with appropriate font for specific language
+    static sf::Text createMultilingualText(const sf::String& text,
         sf::Vector2f position,
-        const sf::Font& font,
+        Language language,
         const UITheme::Colors& colors,
-        int characterSize = 45
-    );
+        int characterSize = 28);
 
-    static sf::Text createTitle(
-        const sf::String& text,
-        sf::Vector2f position,
-        const sf::Font& font,
-        const UITheme::Colors& colors
-    );
+    // Update existing text with appropriate font for language
+    static void updateTextFont(sf::Text& text, Language language);
+
+    // Create enhanced language dropdown with proper font support
+    static std::unique_ptr<Dropdown> createEnhancedLanguageDropdown(sf::Vector2f position,
+        const UITheme::Colors& colors,
+        const UITheme::Layout& layout);
+
+    //std::string getSafeLanguageDisplayText(Language language);
+
+    // Helper function to get display text for language
+    static std::string getLanguageDisplayText(Language language);
+
+private:
+    SettingsUIFactory() = default;
 };

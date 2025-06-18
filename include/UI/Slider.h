@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <functional>
@@ -35,9 +35,9 @@ private:
     bool m_isDragging = false;
     bool m_isHovered = false;
 
-    sf::Color m_backgroundColor = sf::Color(50, 50, 50);
-    sf::Color m_fillColor = sf::Color(100, 150, 255);
-    sf::Color m_handleColor = sf::Color(200, 200, 200);
+    sf::Color m_backgroundColor = sf::Color(139, 117, 83);         // Medium Brown للخلفية
+    sf::Color m_fillColor = sf::Color(139, 69, 19);                // Dark Brown للشريط الممتلئ
+    sf::Color m_handleColor = sf::Color(210, 180, 140);            // Tan للمقبض
 
     std::function<void(float)> m_onValueChanged;
 
