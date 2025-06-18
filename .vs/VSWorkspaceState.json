@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\OOP2_project2"
+    "\\src",
+    "\\src\\UI"
   ],
-  "SelectedNode": "\\OOP2_project2",
+  "SelectedNode": "\\resources",
   "PreviewInSolutionExplorer": false
 }

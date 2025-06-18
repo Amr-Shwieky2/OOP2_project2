@@ -1,89 +1,96 @@
 ﻿#pragma once
-#include "IScreen.h"
+#include "../Core/IScreen.h"
+#include "SettingsResourceManager.h"
+#include "SettingsUIRenderer.h" 
+#include "../Commands/SettingsCommandHandler.h"
+#include "../UI/VolumeControlPanel.h"
+#include "../UI/LanguageControlPanel.h"
 #include <SFML/Graphics.hpp>
 #include <memory>
 
-// Forward declarations
-class VolumeControlPanel;
-class LanguageControlPanel;
-class SettingsEventHandler;
-
-/**
- * Settings Screen - Coordinator for settings components
- * Single Responsibility: Screen lifecycle and component coordination
- *
- * This class follows the Single Responsibility Principle by:
- * - Only handling screen lifecycle (IScreen interface)
- * - Coordinating between specialized components
- * - Managing shared resources (font, background)
- * - Enhanced visual effects and animations
- * - Safe memory management with smart pointers
- * - Safe screen transitions without self-destruction
- */
 class SettingsScreen : public IScreen {
 public:
+    /**
+     * @brief Constructor implementing Composition Pattern
+     * Creates specialized components instead of handling everything internally
+     */
     SettingsScreen();
-    ~SettingsScreen();
 
-    // IScreen interface - متطابق مع Interface الأصلي
+    /**
+     * @brief Destructor with automatic cleanup (RAII)
+     * Smart pointers handle cleanup automatically
+     */
+    ~SettingsScreen() = default;
+
+    /**
+     * @brief IScreen interface implementation with delegation
+     * Each method delegates to appropriate specialized component
+     */
     void handleEvents(sf::RenderWindow& window) override;
     void update(float deltaTime) override;
     void render(sf::RenderWindow& window) override;
 
-    // Additional methods for screen management
-    bool shouldReturnToMenu() const;
-    void resetMenuFlag() { m_shouldReturnToMenu = false; }  // ← إضافة هذا
-    void onEnter();  // للاستدعاء من Screen Manager
-    void onExit();   // للاستدعاء من Screen Manager
+    /**
+     * @brief Screen lifecycle management
+     * Clean entry/exit points for state management
+     */
+    void onEnter();
+    void onExit();
+
+    /**
+     * @brief Configuration methods for flexibility
+     */
+    void enableAutoSave(bool enable);
+    void setAnimationSpeed(float speed);
+
+    /**
+     * @brief Status queries for external systems
+     */
+    bool isInitialized() const { return m_isInitialized; }
+    bool hasUnsavedChanges() const;
 
 private:
-    // Specialized components - using shared_ptr for safe sharing
+    /**
+     * @brief Specialized components implementing Composition Pattern
+     * Each component handles a specific aspect of the screen
+     */
+    std::unique_ptr<SettingsResourceManager> m_resourceManager;
+    std::unique_ptr<SettingsUIRenderer> m_uiRenderer;
+    std::unique_ptr<SettingsCommandHandler> m_commandHandler;
+
+    /**
+     * @brief UI panels using shared_ptr for safe memory management
+     * Shared between command handler (for auto-save) and main screen (for rendering)
+     */
     std::shared_ptr<VolumeControlPanel> m_volumePanel;
     std::shared_ptr<LanguageControlPanel> m_languagePanel;
-    std::unique_ptr<SettingsEventHandler> m_eventHandler;
 
-    // Shared screen resources
-    sf::Font m_font;
-    sf::Texture m_backgroundTexture;
-    sf::Sprite m_backgroundSprite;
-
-    // Screen-level UI elements
-    sf::Text m_titleText;
-    sf::Text m_backInstructionText;
-
-    // Animation state
-    float m_animationTime = 0.0f;
-
-    // State management
+    /**
+     * @brief State management
+     */
     bool m_isInitialized = false;
-    bool m_shouldReturnToMenu = false;
 
-    // Initialization methods - each with single purpose
-    void initializeResources();
+    /**
+     * @brief Initialization methods - each with single purpose
+     * Demonstrates decomposition of complex initialization
+     */
     void initializeComponents();
-    void initializeBackground();
-    void initializeTexts();
-    void wireComponents();
+    void setupUIComponents();
+    void wireComponentsTogether();
+    void configureInitialSettings();
 
-    // Update methods - separated by concern
-    void updateAnimation(float deltaTime);
-    void updateComponents(float deltaTime);
-    void checkForScreenTransition();
+    /**
+     * @brief Event delegation to specialized handlers
+     * Demonstrates Chain of Responsibility pattern
+     */
+    bool delegateMouseEvents(const sf::Event& event);
+    bool delegateKeyboardEvents(const sf::Event& event);
 
-    // Render methods - separated by layer
-    void renderBackground(sf::RenderWindow& window);
-    void renderComponents(sf::RenderWindow& window);
-    void renderScreenTexts(sf::RenderWindow& window);
-    void renderAnimationEffects(sf::RenderWindow& window);
-
-    // Resource management
-    bool loadFont();
-    bool loadBackgroundTexture();
-    void setupFallbackBackground();
-    void cleanup();
-
-    // Error handling
+    /**
+     * @brief Error handling with specific error types
+     */
     void handleInitializationError(const std::string& component);
-    void handleUpdateError(const std::string& component, const std::exception& e);
-    void handleRenderError(const std::string& component, const std::exception& e);
+    void handleRuntimeError(const std::string& operation, const std::exception& e);
+
+    bool validateComponentsIntegrity() const;
 };
