@@ -8,9 +8,11 @@
   "ExpandedNodes": [
     "",
     "\\include",
+    "\\include\\Application",
     "\\src",
-    "\\src\\UI"
+    "\\src\\Application",
+    "\\src\\Services"
   ],
-  "SelectedNode": "\\src\\UI\\Button.cpp",
+  "SelectedNode": "\\include\\Application\\App.h",
   "PreviewInSolutionExplorer": false
 }
