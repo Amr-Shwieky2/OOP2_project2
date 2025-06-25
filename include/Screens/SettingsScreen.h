@@ -31,13 +31,5 @@ private:
 
     bool m_isInitialized = false;
 
-    void initializeComponents();
-    void setupUIComponents();
-    void wireComponentsTogether();
-    void configureInitialSettings();
     bool delegateMouseEvents(const sf::Event& event);
-    bool delegateKeyboardEvents(const sf::Event& event);
-    void handleInitializationError(const std::string& component);
-    void handleRuntimeError(const std::string& operation, const std::exception& e);
-    bool validateComponentsIntegrity() const;
 };

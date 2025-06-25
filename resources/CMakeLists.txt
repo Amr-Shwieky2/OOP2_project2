@@ -44,10 +44,6 @@ configure_file ("./fonts/NotoSansArabic-Regular.ttf" ${CMAKE_BINARY_DIR} COPYONL
 configure_file ("./fonts/NotoSansHebrew-Regular.ttf" ${CMAKE_BINARY_DIR} COPYONLY)
 
 configure_file ("highScore.txt" ${CMAKE_BINARY_DIR} COPYONLY)
-configure_file ("arabic.txt" ${CMAKE_BINARY_DIR} COPYONLY)
-configure_file ("hebrew.txt" ${CMAKE_BINARY_DIR} COPYONLY)
-configure_file ("language.txt" ${CMAKE_BINARY_DIR} COPYONLY)
-configure_file ("english.txt" ${CMAKE_BINARY_DIR} COPYONLY)
 
 configure_file ("./Audio/intro.wav" ${CMAKE_BINARY_DIR} COPYONLY)  
 configure_file ("./Audio/coin-received.wav" ${CMAKE_BINARY_DIR} COPYONLY)  

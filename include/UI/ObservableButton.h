@@ -44,7 +44,7 @@ public:
      * @param mousePos Current mouse position
      * @return true if button was clicked, false otherwise
      */
-    bool handleClick(const sf::Vector2f& mousePos) override {
+    bool handleClick(const sf::Vector2f& mousePos)  {
         if (Button::handleClick(mousePos)) {
             std::cout << "Button '" << m_id << "' clicked!" << std::endl;
 
@@ -65,7 +65,7 @@ public:
      *
      * @param mousePos Current mouse position
      */
-    void handleMouseMove(const sf::Vector2f& mousePos) override {
+    void handleMouseMove(const sf::Vector2f& mousePos)  {
         // Call parent method for visual hover effects
         Button::handleMouseMove(mousePos);
 
