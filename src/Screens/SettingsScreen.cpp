@@ -34,10 +34,16 @@ void SettingsScreen::handleEvents(sf::RenderWindow& window) {
             return;
         }
 
-        // Handle keyboard input using Command Pattern
+        // Handle keyboard input using SAFE Command Pattern
         if (event.type == sf::Event::KeyPressed) {
-            if (m_commandHandler && m_commandHandler->handleKeyboardInput(event)) {
-                return; // Command was handled
+            if (m_commandHandler) {
+                bool shouldExit = m_commandHandler->handleKeyboardInput(event);
+                if (shouldExit) {
+                    // Exit to menu screen safely
+                    std::cout << "SettingsScreen: Exiting to menu screen" << std::endl;
+                    AppContext::instance().screenManager().changeScreen(ScreenType::MENU);
+                    return;
+                }
             }
         }
 
@@ -103,7 +109,7 @@ void SettingsScreen::initializeComponents() {
     m_uiRenderer = std::make_unique<SettingsUIRenderer>(m_resourceManager->getFont());
     m_uiRenderer->initializeTexts();
 
-    // Create Command Handler
+    // Create SAFE Command Handler (no callbacks)
     m_commandHandler = std::make_unique<SettingsCommandHandler>();
 }
 
@@ -141,10 +147,6 @@ void SettingsScreen::configureInitialSettings() {
         m_commandHandler->enableAutoSave(true);
         m_commandHandler->setAutoSaveDelay(0.5f);
     }
-}
-
-bool SettingsScreen::delegateKeyboardEvents(const sf::Event& event) {
-    return m_commandHandler ? m_commandHandler->handleKeyboardInput(event) : false;
 }
 
 bool SettingsScreen::delegateMouseEvents(const sf::Event& event) {

@@ -1,92 +1,60 @@
-// File: include/Screens/SettingsCommandHandler.h
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "../Application/AppContext.h"
-#include "../Commands/EscapeKeyCommand.h"
 #include <memory>
 
-// Forward declarations to avoid circular dependencies
+// Forward declarations
+class SettingsInputHandler;
+class SettingsCommandExecutor;
+class SettingsAutoSaveManager;
+class SettingsEventLogger;
 class VolumeControlPanel;
 
+/**
+ * @brief Safe Settings Command Handler - Uses polling instead of callbacks
+ * Single Responsibility: Coordinates components safely without callbacks
+ */
 class SettingsCommandHandler {
 public:
     SettingsCommandHandler();
-    ~SettingsCommandHandler() = default;
+    ~SettingsCommandHandler();
 
     /**
-     * @brief Main input processing entry point
-     * @param event Keyboard event to process
-     * @return true if event was handled, false if ignored
-     *
-     * This method demonstrates the Chain of Responsibility pattern
+     * @brief Main entry point - returns true if should exit to menu
+     * @param event SFML event
+     * @return true if screen should exit (ESC was pressed)
      */
     bool handleKeyboardInput(const sf::Event& event);
 
     /**
-     * @brief Individual command executors - Command Pattern implementation
-     * Each method represents a specific command that can be executed
-     */
-    void executeEscapeCommand();
-    bool executeUndo();
-    bool executeRedo();
-    void printCommandHistory();
-
-    /**
-     * @brief Dependency injection for UI panels
-     * @param panel Shared pointer to volume control panel
-     *
-     * Uses weak_ptr to avoid circular dependencies and memory leaks
+     * @brief Configure components
      */
     void setVolumePanel(std::shared_ptr<VolumeControlPanel> panel);
+    void enableAutoSave(bool enable);
+    void setAutoSaveDelay(float seconds);
+    void enableLogging(bool enable);
 
     /**
-     * @brief Advanced features for demonstrating sophisticated design
+     * @brief State queries
      */
-    void enableAutoSave(bool enable) { m_autoSaveEnabled = enable; }
-    void setAutoSaveDelay(float seconds) { m_autoSaveDelay = seconds; }
-    bool isAutoSaveEnabled() const { return m_autoSaveEnabled; }
+    bool isAutoSaveEnabled() const;
+    bool hasUnsavedChanges() const;
 
 private:
-    // Panel references using weak_ptr for safe memory management
-    std::weak_ptr<VolumeControlPanel> m_volumePanel;
+    // Specialized components - each has one responsibility
+    std::unique_ptr<SettingsInputHandler> m_inputHandler;
+    std::unique_ptr<SettingsCommandExecutor> m_commandExecutor;
+    std::unique_ptr<SettingsAutoSaveManager> m_autoSaveManager;
+    std::unique_ptr<SettingsEventLogger> m_eventLogger;
 
-    // Auto-save configuration
-    bool m_autoSaveEnabled = true;
-    float m_autoSaveDelay = 0.5f; // seconds
-
-    /**
-     * @brief Individual key handlers implementing Chain of Responsibility
-     * Each handler processes specific input and returns success/failure
-     */
-    bool handleEscapeKey();
-    bool handleUndoKey();
-    bool handleRedoKey();
-    bool handleHistoryKey();
+    bool m_isDestroying = false;  // Safety flag
 
     /**
-     * @brief Auto-save system implementation
-     * Demonstrates encapsulation of related functionality
+     * @brief Safe helper methods
      */
-    void saveSettingsBeforeExit();
-    bool shouldSaveVolumeSettings();
-    void performAutoSave();
-
-    /**
-     * @brief Input validation and error handling
-     */
-    bool isValidKeyboardEvent(const sf::Event& event) const;
-    bool isModifierKeyPressed(const sf::Event& event) const;
-
-    /**
-     * @brief Debug and logging utilities
-     */
-    void logCommandExecution(const std::string& commandName, bool success);
-    void logInputEvent(const sf::Event& event);
-    void logAutoSaveAction(const std::string& action);
-
-    /**
-     * @brief Command execution helpers
-     */
-    std::unique_ptr<EscapeKeyCommand> createEscapeCommand();
-    void executeCommandSafely(std::unique_ptr<ICommand> command);
+    bool isComponentsValid() const;
+    void safeLog(const std::string& message);
+    bool handleEscapeInput();
+    bool handleUndoInput();
+    bool handleRedoInput();
+    bool handleHistoryInput();
 };
