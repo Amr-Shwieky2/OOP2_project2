@@ -1,7 +1,6 @@
-#include "VolumeControlPanel.h"
+﻿#include "VolumeControlPanel.h"
 #include "Slider.h"
 #include "../Core/AudioManager.h"
-#include "../Core/LanguageManager.h"
 #include <iostream>
 
 // VolumeSlider implementation
@@ -71,13 +70,12 @@ VolumeControlPanel::~VolumeControlPanel() {
 }
 
 void VolumeControlPanel::setupMasterVolumeSlider(const sf::Font& font) {
-    auto& lang = LanguageManager::instance();
-    std::string labelText = lang.getText("settings_volume") + " (Master):";
+    // حذف auto& lang = LanguageManager::instance();
+    std::string labelText = "Volume (Master):";  // نص ثابت بالإنجليزية
 
     sf::Vector2f position = calculateSliderPosition(0);
     m_masterVolume = std::make_unique<VolumeSlider>(labelText, "master", font, position);
 
-    // Set callback
     if (m_masterVolume->slider) {
         m_masterVolume->slider->setOnValueChanged([this](float value) {
             onVolumeChanged("master", value);
@@ -86,13 +84,11 @@ void VolumeControlPanel::setupMasterVolumeSlider(const sf::Font& font) {
 }
 
 void VolumeControlPanel::setupMusicVolumeSlider(const sf::Font& font) {
-    auto& lang = LanguageManager::instance();
-    std::string labelText = lang.getText("settings_volume") + " (Music):";
+    std::string labelText = "Volume (Music):";  // نص ثابت
 
     sf::Vector2f position = calculateSliderPosition(1);
     m_musicVolume = std::make_unique<VolumeSlider>(labelText, "music", font, position);
 
-    // Set callback
     if (m_musicVolume->slider) {
         m_musicVolume->slider->setOnValueChanged([this](float value) {
             onVolumeChanged("music", value);
@@ -101,13 +97,11 @@ void VolumeControlPanel::setupMusicVolumeSlider(const sf::Font& font) {
 }
 
 void VolumeControlPanel::setupSFXVolumeSlider(const sf::Font& font) {
-    auto& lang = LanguageManager::instance();
-    std::string labelText = lang.getText("settings_volume") + " (SFX):";
+    std::string labelText = "Volume (SFX):";  // نص ثابت
 
     sf::Vector2f position = calculateSliderPosition(2);
     m_sfxVolume = std::make_unique<VolumeSlider>(labelText, "sfx", font, position);
 
-    // Set callback
     if (m_sfxVolume->slider) {
         m_sfxVolume->slider->setOnValueChanged([this](float value) {
             onVolumeChanged("sfx", value);

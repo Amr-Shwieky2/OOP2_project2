@@ -7,8 +7,6 @@
 
 // Forward declarations to avoid circular dependencies
 class VolumeControlPanel;
-class LanguageControlPanel;
-
 
 class SettingsCommandHandler {
 public:
@@ -40,7 +38,6 @@ public:
      * Uses weak_ptr to avoid circular dependencies and memory leaks
      */
     void setVolumePanel(std::shared_ptr<VolumeControlPanel> panel);
-    void setLanguagePanel(std::shared_ptr<LanguageControlPanel> panel);
 
     /**
      * @brief Advanced features for demonstrating sophisticated design
@@ -52,7 +49,6 @@ public:
 private:
     // Panel references using weak_ptr for safe memory management
     std::weak_ptr<VolumeControlPanel> m_volumePanel;
-    std::weak_ptr<LanguageControlPanel> m_languagePanel;
 
     // Auto-save configuration
     bool m_autoSaveEnabled = true;
@@ -73,7 +69,6 @@ private:
      */
     void saveSettingsBeforeExit();
     bool shouldSaveVolumeSettings();
-    bool shouldSaveLanguageSettings();
     void performAutoSave();
 
     /**

@@ -12,8 +12,6 @@ public:
 private:
     void initialize();
     void initializeAudioSystem();
-    void initializeLanguageSystem();
-    void loadLanguagePreference();
     // Load resources, register screens
     void mainLoop();       // Main update/render loop
 

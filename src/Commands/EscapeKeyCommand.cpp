@@ -3,25 +3,15 @@
 #include <iostream>
 
 EscapeKeyCommand::EscapeKeyCommand(ScreenType currentScreen, ScreenType targetScreen)
-    : m_currentScreen(currentScreen), m_targetScreen(targetScreen) {
-
-    std::cout << "EscapeKeyCommand: Created - "
-        << screenTypeToString(m_currentScreen)
-        << " -> " << screenTypeToString(m_targetScreen) << std::endl;
-}
+    : m_currentScreen(currentScreen), m_targetScreen(targetScreen) {}
 
 void EscapeKeyCommand::execute() {
-    std::cout << "EscapeKeyCommand: Executing..." << std::endl;
-
     try {
         // Get screen manager
         AppContext::instance().screenManager().changeScreen(m_targetScreen);
 
         // Mark as executed
         m_hasExecuted = true;
-
-        std::cout << "EscapeKeyCommand: Success!" << std::endl;
-
     }
     catch (const std::exception& e) {
         std::cout << "EscapeKeyCommand: Failed - " << e.what() << std::endl;
@@ -32,17 +22,12 @@ void EscapeKeyCommand::execute() {
 
 void EscapeKeyCommand::undo() {
     if (!m_hasExecuted) {
-        std::cout << "EscapeKeyCommand: Cannot undo - command was not executed" << std::endl;
         return;
     }
-
-    std::cout << "EscapeKeyCommand: Undoing - Returning to "
-        << screenTypeToString(m_currentScreen) << std::endl;
 
     try {
         // العودة للشاشة السابقة
         AppContext::instance().screenManager().changeScreen(m_currentScreen);
-        std::cout << "EscapeKeyCommand: Undo successful!" << std::endl;
     }
     catch (const std::exception& e) {
         std::cout << "EscapeKeyCommand: Failed to undo - " << e.what() << std::endl;

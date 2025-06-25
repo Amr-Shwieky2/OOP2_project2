@@ -1,8 +1,5 @@
-#include "SettingsUIFactory.h"
+﻿#include "SettingsUIFactory.h"
 #include "Slider.h"
-#include "Dropdown.h"
-#include "../Core/LanguageManager.h"
-#include "../Core/MultiFontManager.h"
 
 sf::Text SettingsUIFactory::createTitle(const sf::String& text, sf::Vector2f position,
     const sf::Font& font, const UITheme::Colors& colors) {
@@ -58,58 +55,4 @@ SettingsUIFactory::VolumeControls SettingsUIFactory::createVolumeControl(
     control.value.setString(std::to_string(static_cast<int>(initialValue)) + "%");
 
     return control;
-}
-
-std::unique_ptr<Dropdown> SettingsUIFactory::createLanguageDropdown(sf::Vector2f position,
-    const sf::Font& font,
-    const UITheme::Colors& colors,
-    const UITheme::Layout& layout) {
-
-    auto dropdown = std::make_unique<Dropdown>(position, layout.dropdownSize, font);
-    dropdown->setColors(colors.dropdownBackground, colors.dropdownText, colors.dropdownHighlight);
-
-    return dropdown;
-}
-
-// New enhanced functions
-sf::Text SettingsUIFactory::createMultilingualText(const sf::String& text,
-    sf::Vector2f position,
-    Language language,
-    const UITheme::Colors& colors,
-    int characterSize) {
-
-    sf::Text mlText;
-
-    // Get appropriate font for language
-    const sf::Font& font = MultiFontManager::instance().getFontForLanguage(language);
-    mlText.setFont(font);
-
-    mlText.setString(text);
-    mlText.setCharacterSize(characterSize);
-    mlText.setFillColor(colors.labelText);
-    mlText.setPosition(position);
-
-    return mlText;
-}
-
-void SettingsUIFactory::updateTextFont(sf::Text& text, Language language) {
-    const sf::Font& font = MultiFontManager::instance().getFontForLanguage(language);
-    text.setFont(font);
-}
-
-std::unique_ptr<Dropdown> SettingsUIFactory::createEnhancedLanguageDropdown(sf::Vector2f position,
-    const UITheme::Colors& colors,
-    const UITheme::Layout& layout) {
-
-    // Get current font
-    const sf::Font& font = MultiFontManager::instance().getCurrentFont();
-
-    auto dropdown = std::make_unique<Dropdown>(position, layout.dropdownSize, font);
-    dropdown->setColors(colors.dropdownBackground, colors.dropdownText, colors.dropdownHighlight);
-
-    return dropdown;
-}
-
-std::string SettingsUIFactory::getLanguageDisplayText(Language language) {
-    return MultiFontManager::instance().getLanguageDisplayName(language);
 }

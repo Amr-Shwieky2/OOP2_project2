@@ -4,5 +4,13 @@
       "out\\build\\x64-Debug",
       "out\\build\\x64-Release"
     ]
-  }
+  },
+  "ExpandedNodes": [
+    "",
+    "\\include",
+    "\\src",
+    "\\src\\UI"
+  ],
+  "SelectedNode": "\\src\\UI\\Button.cpp",
+  "PreviewInSolutionExplorer": false
 }
