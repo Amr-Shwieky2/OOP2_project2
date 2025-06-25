@@ -1,6 +1,5 @@
 ﻿#include "SettingsEventHandler.h"
 #include "VolumeControlPanel.h"
-#include "LanguageControlPanel.h"
 #include <iostream>
 
 SettingsEventHandler::SettingsEventHandler() : m_shouldExitToMenu(false) {
@@ -14,16 +13,10 @@ SettingsEventHandler::~SettingsEventHandler() {
 
 void SettingsEventHandler::cleanup() {
     try {
-        // منع أي events جديدة
         m_shouldExitToMenu = true;
 
-        // تنظيف المؤشرات بأمان
         if (m_volumePanel) {
             m_volumePanel.reset();
-        }
-
-        if (m_languagePanel) {
-            m_languagePanel.reset();
         }
 
         std::cout << "SettingsEventHandler cleanup completed" << std::endl;
@@ -40,14 +33,6 @@ void SettingsEventHandler::setVolumePanel(std::shared_ptr<VolumeControlPanel> pa
     }
 }
 
-void SettingsEventHandler::setLanguagePanel(std::shared_ptr<LanguageControlPanel> panel) {
-    if (panel) {
-        m_languagePanel = panel;
-        std::cout << "Language panel registered with event handler" << std::endl;
-    }
-}
-
-// ← إضافة هذه الدالة المهمة
 void SettingsEventHandler::resetExitFlag() {
     m_shouldExitToMenu = false;
     std::cout << "Exit flag reset" << std::endl;
@@ -58,22 +43,19 @@ bool SettingsEventHandler::shouldExitToMenu() const {
 }
 
 void SettingsEventHandler::handleEvents(sf::RenderWindow& window) {
-    // تحقق من الحالة قبل معالجة الأحداث
     if (m_shouldExitToMenu) {
-        return; // تجنب معالجة events أثناء الخروج
+        return;
     }
 
     sf::Event event;
     while (window.pollEvent(event)) {
         try {
-            // Handle different event types
             handleWindowEvents(window, event);
             handleKeyboardEvents(event);
             handleMouseEvents(event);
         }
         catch (const std::exception& e) {
             std::cout << "Error handling event: " << e.what() << std::endl;
-            // في حالة خطأ حرج، اطلب الخروج
             m_shouldExitToMenu = true;
         }
         catch (...) {
@@ -82,7 +64,6 @@ void SettingsEventHandler::handleEvents(sf::RenderWindow& window) {
         }
     }
 
-    // إضافة تجربة polling مباشر كحل بديل
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
         if (!m_shouldExitToMenu) {
             std::cout << "Escape detected via polling - requesting exit to menu" << std::endl;
@@ -101,7 +82,6 @@ void SettingsEventHandler::handleWindowEvents(sf::RenderWindow& window, const sf
 void SettingsEventHandler::handleKeyboardEvents(const sf::Event& event) {
     if (!isValidKeyboardEvent(event)) return;
 
-    // إضافة debug للكيبورد
     if (event.type == sf::Event::KeyPressed) {
         std::cout << "Key pressed detected: " << event.key.code << std::endl;
         handleKeyPressEvents(event);
@@ -117,7 +97,7 @@ void SettingsEventHandler::handleKeyPressEvents(const sf::Event& event) {
         processEscapeKey();
         break;
 
-    case sf::Keyboard::Enter:    // ← الإصلاح الأول
+    case sf::Keyboard::Enter:
         processEnterKey();
         break;
 
@@ -149,15 +129,12 @@ void SettingsEventHandler::handleMouseEvents(const sf::Event& event) {
 }
 
 void SettingsEventHandler::handleMouseMoveEvents(const sf::Event& event) {
-    // Delegate to components
     delegateMouseEventToComponents(event);
 }
 
 void SettingsEventHandler::handleMousePressEvents(const sf::Event& event) {
     if (event.mouseButton.button == sf::Mouse::Left) {
-        // Delegate to components
         bool handled = delegateMouseEventToComponents(event);
-
         if (handled) {
             std::cout << "Mouse press handled by component" << std::endl;
         }
@@ -166,32 +143,24 @@ void SettingsEventHandler::handleMousePressEvents(const sf::Event& event) {
 
 void SettingsEventHandler::handleMouseReleaseEvents(const sf::Event& event) {
     if (event.mouseButton.button == sf::Mouse::Left) {
-        // Delegate to components
         delegateMouseEventToComponents(event);
     }
 }
 
 bool SettingsEventHandler::delegateMouseEventToComponents(const sf::Event& event) {
-    // تحقق من صحة الحالة أولاً
     if (m_shouldExitToMenu) {
-        return false; // تجنب معالجة events أثناء الخروج
+        return false;
     }
 
     bool handled = false;
 
     try {
-        // تحقق من صحة المؤشرات قبل الاستخدام
         if (m_volumePanel && m_volumePanel.get() != nullptr) {
             handled |= m_volumePanel->handleMouseEvent(event);
-        }
-
-        if (m_languagePanel && m_languagePanel.get() != nullptr && !handled) {
-            handled |= m_languagePanel->handleMouseEvent(event);
         }
     }
     catch (const std::exception& e) {
         std::cout << "Error delegating mouse event: " << e.what() << std::endl;
-        // في حالة خطأ، ننظف ونطلب الخروج
         cleanup();
         m_shouldExitToMenu = true;
     }
@@ -200,7 +169,7 @@ bool SettingsEventHandler::delegateMouseEventToComponents(const sf::Event& event
 }
 
 void SettingsEventHandler::processEscapeKey() {
-    if (!m_shouldExitToMenu) {  // ← منع التكرار
+    if (!m_shouldExitToMenu) {
         std::cout << "Escape key pressed - requesting exit to menu" << std::endl;
         std::cout << "Setting exit flag to true" << std::endl;
         m_shouldExitToMenu = true;
@@ -211,17 +180,11 @@ void SettingsEventHandler::processEscapeKey() {
 }
 
 void SettingsEventHandler::processEnterKey() {
-    // Could be used for confirming settings or other actions
     std::cout << "Enter key pressed in settings" << std::endl;
 
-    // Save any pending changes
     try {
         if (m_volumePanel && m_volumePanel.get() != nullptr && m_volumePanel->hasChanged()) {
             m_volumePanel->saveSettings();
-        }
-
-        if (m_languagePanel && m_languagePanel.get() != nullptr && m_languagePanel->hasChanged()) {
-            m_languagePanel->saveLanguagePreference();
         }
     }
     catch (const std::exception& e) {

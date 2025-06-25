@@ -2,9 +2,7 @@
 #include "AppContext.h"
 #include "ScreenTypes.h"
 #include "Logger.h"
-#include "AudioManager.h"  // إضافة AudioManager
-#include "../Core/LanguageManager.h"
-#include "../Core/MultiFontManager.h"
+#include "AudioManager.h"
 
 // Include screen files
 #include "../Screens/LoadingScreen.h"
@@ -27,14 +25,11 @@ void App::run() {
     Logger::log("Starting Desert Ball game...");
     initialize();
     mainLoop();
-    cleanup();  // إضافة تنظيف
+    cleanup();
     Logger::log("Game ended.");
 }
 
 void App::initialize() {
-    // Initialize language system first
-    initializeLanguageSystem();
-
     // Initialize audio system
     initializeAudioSystem();
 
@@ -105,69 +100,6 @@ void App::initializeAudioSystem() {
     catch (const std::exception& e) {
         Logger::log("Error initializing audio system: " + std::string(e.what()), LogLevel::Error);
         Logger::log("Game will continue without audio", LogLevel::Warning);
-    }
-}
-
-void App::initializeLanguageSystem() {
-    try {
-        Logger::log("Initializing language system...");
-
-        // Load fonts for all languages
-        MultiFontManager::instance().loadLanguageFonts();
-
-        // Load language files
-        auto& langManager = LanguageManager::instance();
-
-        langManager.loadLanguageFile(Language::ENGLISH, "english.txt");
-        langManager.loadLanguageFile(Language::ARABIC, "arabic.txt");
-        langManager.loadLanguageFile(Language::HEBREW, "hebrew.txt");
-
-        // Load saved language preference
-        loadLanguagePreference();
-
-        Logger::log("Language system initialized successfully");
-    }
-    catch (const std::exception& e) {
-        Logger::log("Error initializing language system: " + std::string(e.what()), LogLevel::Error);
-        // Fallback to English
-        LanguageManager::instance().setLanguage(Language::ENGLISH);
-    }
-}
-
-void App::loadLanguagePreference() {
-    try {
-        std::ifstream file("language.txt");
-        if (file.is_open()) {
-            std::string line;
-            while (std::getline(file, line)) {
-                if (line.length() == 0) continue;
-
-                size_t pos = line.find('=');
-                if (pos != std::string::npos && pos > 0 && pos < line.length() - 1) {
-                    std::string key = line.substr(0, pos);
-                    std::string valueStr = line.substr(pos + 1);
-
-                    if (key == "language" && !valueStr.empty()) {
-                        int value = std::stoi(valueStr);
-                        if (value >= 0 && value <= 2) {
-                            Language savedLang = static_cast<Language>(value);
-                            LanguageManager::instance().setLanguage(savedLang);
-                            Logger::log("Loaded saved language: " + std::to_string(value));
-                            return;
-                        }
-                    }
-                }
-            }
-            file.close();
-        }
-
-        // Default to English if no saved preference
-        LanguageManager::instance().setLanguage(Language::ENGLISH);
-        Logger::log("Using default language: English");
-    }
-    catch (const std::exception& e) {
-        Logger::log("Error loading language preference: " + std::string(e.what()), LogLevel::Warning);
-        LanguageManager::instance().setLanguage(Language::ENGLISH);
     }
 }
 

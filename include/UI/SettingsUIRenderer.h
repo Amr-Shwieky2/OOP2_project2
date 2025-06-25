@@ -73,8 +73,8 @@ private:
         sf::Color shadowColor = sf::Color(50, 33, 17, 120);  // Dark Brown Shadow
 
         // Typography settings
-        int titleSize = 48;
-        int instructionSize = 20;
+        int titleSize = 60;
+        int instructionSize = 25;
 
         // Animation parameters
         float glowIntensityMin = 0.7f;

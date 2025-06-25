@@ -1,5 +1,4 @@
-#include "../../include/UI/SettingsUIRenderer.h"
-#include "../Core/LanguageManager.h"
+﻿#include "../../include/UI/SettingsUIRenderer.h"
 #include <iostream>
 #include <cmath>
 
@@ -8,27 +7,25 @@ SettingsUIRenderer::SettingsUIRenderer(const sf::Font& font) : m_font(font) {
 }
 
 void SettingsUIRenderer::initializeTexts() {
-    std::cout << "Initializing UI texts with internationalization support..." << std::endl;
+    std::cout << "Initializing UI texts..." << std::endl;
 
-    auto& lang = LanguageManager::instance();
-
-    // Setup title text with comprehensive styling
+    // Setup title text with hardcoded English
     setupTextProperties(m_titleText,
-        lang.getText("settings_title"),
+        "Settings",  // نص ثابت
         m_config.titleSize,
         m_config.titleColor);
-    m_titleText.setPosition(550, 50);
-    applyTextStyling(m_titleText, sf::Text::Bold);
+    m_titleText.setPosition(570, 70);
+    applyTextStyling(m_titleText, sf::Text::Italic);
 
     // Setup instruction text  
     setupTextProperties(m_backInstructionText,
-        lang.getText("settings_back"),
+        "Press ESC to go back",  // نص ثابت
         m_config.instructionSize,
         m_config.instructionColor);
-    m_backInstructionText.setPosition(500, 650);
+    m_backInstructionText.setPosition(570, 550);
     applyTextStyling(m_backInstructionText, sf::Text::Italic);
 
-    std::cout << "UI texts initialized with localized content and consistent styling" << std::endl;
+    std::cout << "UI texts initialized" << std::endl;
 }
 
 void SettingsUIRenderer::updateAnimation(float deltaTime) {

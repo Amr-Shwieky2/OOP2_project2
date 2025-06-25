@@ -8,12 +8,6 @@
  */
 ChangeScreenCommand::ChangeScreenCommand(ScreenType targetScreen, ScreenType previousScreen)
     : m_targetScreen(targetScreen), m_previousScreen(previousScreen) {
-
-    // Debug output showing command creation with screen transition details
-    std::cout << "ChangeScreenCommand: Created - "
-        << screenTypeToString(m_previousScreen)
-        << "  "
-        << screenTypeToString(m_targetScreen) << std::endl;
 }
 
 /**
@@ -21,13 +15,9 @@ ChangeScreenCommand::ChangeScreenCommand(ScreenType targetScreen, ScreenType pre
  * This method performs the actual screen transition using the AppContext
  */
 void ChangeScreenCommand::execute() {
-    std::cout << "ChangeScreenCommand: Executing - Changing to "
-        << screenTypeToString(m_targetScreen) << std::endl;
-
     try {
         // Use AppContext singleton to access screen manager and change screen
         AppContext::instance().screenManager().changeScreen(m_targetScreen);
-        std::cout << "ChangeScreenCommand: Screen changed successfully!" << std::endl;
     }
     catch (const std::exception& e) {
         // Handle any errors that occur during screen change
@@ -40,13 +30,9 @@ void ChangeScreenCommand::execute() {
  * This enables "back" navigation functionality
  */
 void ChangeScreenCommand::undo() {
-    std::cout << "ChangeScreenCommand: Undoing - Returning to "
-        << screenTypeToString(m_previousScreen) << std::endl;
-
     try {
         // Navigate back to the previous screen
         AppContext::instance().screenManager().changeScreen(m_previousScreen);
-        std::cout << "ChangeScreenCommand: Undo successful!" << std::endl;
     }
     catch (const std::exception& e) {
         // Handle any errors that occur during undo operation

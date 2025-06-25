@@ -62,7 +62,6 @@ void AudioManager::playMusic(const std::string& name, bool loop) {
     if (it != m_music.end()) {
         // Stop current music if any
         if (m_currentMusic) {
-            std::cout << "Stopping previous music..." << std::endl;
             m_currentMusic->stop();
         }
 
@@ -71,7 +70,6 @@ void AudioManager::playMusic(const std::string& name, bool loop) {
         m_currentMusic->setLoop(loop);
         m_currentMusic->setVolume(getEffectiveVolume(m_musicVolume));
         m_currentMusic->play();
-        std::cout << "Playing new music: " << name << " (loop: " << (loop ? "yes" : "no") << ")" << std::endl;
     }
 }
 
@@ -126,8 +124,6 @@ bool AudioManager::loadMenuSounds() {
         return true;
     }
 
-    std::cout << "Loading menu sounds for looping..." << std::endl;
-
     bool allLoaded = true;
     const std::string soundFile = "intro.wav";
 
@@ -143,42 +139,36 @@ bool AudioManager::loadMenuSounds() {
     allLoaded &= loadSound("button_click", soundFile);
 
     m_menuSoundsLoaded = allLoaded;
-    std::cout << "Menu sounds loaded: " << (allLoaded ? "Success" : "Failed") << std::endl;
     return allLoaded;
 }
 
 // MODIFIED: Menu sound playback functions now use looping music
 void AudioManager::playMenuSound() {
     if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
-        std::cout << "Playing menu music with loop..." << std::endl;
         playMusic("menu_music", true); // true = loop
     }
 }
 
 void AudioManager::playLoadingSound() {
     if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
-        std::cout << "Playing loading music with loop..." << std::endl;
         playMusic("loading_music", true); // true = loop
     }
 }
 
 void AudioManager::playSettingsSound() {
     if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
-        std::cout << "Playing settings music with loop..." << std::endl;
         playMusic("settings_music", true); // true = loop
     }
 }
 
 void AudioManager::playHelpSound() {
     if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
-        std::cout << "Playing help music with loop..." << std::endl;
         playMusic("help_music", true); // true = loop
     }
 }
 
 void AudioManager::playAboutSound() {
     if (m_menuSoundsEnabled && m_menuSoundsLoaded) {
-        std::cout << "Playing about music with loop..." << std::endl;
         playMusic("about_music", true); // true = loop
     }
 }

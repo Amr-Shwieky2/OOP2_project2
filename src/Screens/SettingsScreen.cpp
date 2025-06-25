@@ -1,6 +1,6 @@
-﻿#include "../../include/Screens/SettingsScreen.h"
-#include "../Application/AppContext.h"
+﻿#include "../Application/AppContext.h"
 #include <iostream>
+#include "../../include/Screens/SettingsScreen.h"
 
 SettingsScreen::SettingsScreen() {
     try {
@@ -46,10 +46,6 @@ void SettingsScreen::handleEvents(sf::RenderWindow& window) {
     }
 }
 
-/**
- * @brief Update method with component coordination
- * Each component handles its own updates independently
- */
 void SettingsScreen::update(float deltaTime) {
     if (!m_isInitialized) return;
 
@@ -61,7 +57,6 @@ void SettingsScreen::update(float deltaTime) {
 
         // Update interactive components
         if (m_volumePanel) m_volumePanel->update(deltaTime);
-        if (m_languagePanel) m_languagePanel->update(deltaTime);
 
     }
     catch (const std::exception& e) {
@@ -69,10 +64,6 @@ void SettingsScreen::update(float deltaTime) {
     }
 }
 
-/**
- * @brief Render method with rendering pipeline separation
- * Demonstrates clear separation of rendering responsibilities
- */
 void SettingsScreen::render(sf::RenderWindow& window) {
     if (!m_isInitialized) return;
 
@@ -89,7 +80,6 @@ void SettingsScreen::render(sf::RenderWindow& window) {
 
         // Render interactive components
         if (m_volumePanel) m_volumePanel->render(window);
-        if (m_languagePanel) m_languagePanel->render(window);
 
         // Render additional effects
         if (m_uiRenderer) {
@@ -102,9 +92,6 @@ void SettingsScreen::render(sf::RenderWindow& window) {
     }
 }
 
-/**
- * @brief Initialize specialized components with Factory-like pattern
- */
 void SettingsScreen::initializeComponents() {
     // Create Resource Manager (needed by other components)
     m_resourceManager = std::make_unique<SettingsResourceManager>();
@@ -120,9 +107,6 @@ void SettingsScreen::initializeComponents() {
     m_commandHandler = std::make_unique<SettingsCommandHandler>();
 }
 
-/**
- * @brief Setup UI Components with Factory Pattern
- */
 void SettingsScreen::setupUIComponents() {
     try {
         // Create volume control with dependency injection
@@ -131,32 +115,19 @@ void SettingsScreen::setupUIComponents() {
             throw std::runtime_error("Failed to create VolumeControlPanel");
         }
 
-        // Create language control with dependency injection
-        m_languagePanel = std::make_shared<LanguageControlPanel>(m_resourceManager->getFont());
-        if (!m_languagePanel) {
-            throw std::runtime_error("Failed to create LanguageControlPanel");
-        }
-
     }
     catch (const std::exception& e) {
         throw std::runtime_error("UI Component setup failed: " + std::string(e.what()));
     }
 }
 
-/**
- * @brief Wire components using Dependency Injection
- */
 void SettingsScreen::wireComponentsTogether() {
     // Inject UI panels into Command Handler for auto-save
     if (m_commandHandler) {
         m_commandHandler->setVolumePanel(m_volumePanel);
-        m_commandHandler->setLanguagePanel(m_languagePanel);
     }
 }
 
-/**
- * @brief Configure initial settings for all components
- */
 void SettingsScreen::configureInitialSettings() {
     // Configure UI effects
     if (m_uiRenderer) {
@@ -172,30 +143,14 @@ void SettingsScreen::configureInitialSettings() {
     }
 }
 
-/**
- * @brief Delegate keyboard events to Command Handler
- */
 bool SettingsScreen::delegateKeyboardEvents(const sf::Event& event) {
     return m_commandHandler ? m_commandHandler->handleKeyboardInput(event) : false;
 }
 
-/**
- * @brief Delegate mouse events to UI components with priority order
- */
 bool SettingsScreen::delegateMouseEvents(const sf::Event& event) {
     bool handled = false;
 
-    // Try language panel first
-    if (m_languagePanel && !handled) {
-        try {
-            handled = m_languagePanel->handleMouseEvent(event);
-        }
-        catch (const std::exception& e) {
-            std::cout << "Error in LanguageControlPanel: " << e.what() << std::endl;
-        }
-    }
-
-    // Try volume panel if not handled
+    // Try volume panel
     if (m_volumePanel && !handled) {
         try {
             handled = m_volumePanel->handleMouseEvent(event);
@@ -208,11 +163,7 @@ bool SettingsScreen::delegateMouseEvents(const sf::Event& event) {
     return handled;
 }
 
-/**
- * @brief Screen lifecycle methods
- */
 void SettingsScreen::onEnter() {
-    // Reset animation speed on enter
     if (m_uiRenderer) {
         m_uiRenderer->setAnimationSpeed(1.0f);
     }
@@ -222,13 +173,9 @@ void SettingsScreen::onExit() {
     // Auto-save handled by Command Pattern
 }
 
-/**
- * @brief Configuration methods
- */
 bool SettingsScreen::hasUnsavedChanges() const {
     bool volumeChanged = m_volumePanel && m_volumePanel->hasChanged();
-    bool languageChanged = m_languagePanel && m_languagePanel->hasChanged();
-    return volumeChanged || languageChanged;
+    return volumeChanged;
 }
 
 void SettingsScreen::enableAutoSave(bool enable) {
@@ -243,13 +190,9 @@ void SettingsScreen::setAnimationSpeed(float speed) {
     }
 }
 
-/**
- * @brief Validation and error handling
- */
 bool SettingsScreen::validateComponentsIntegrity() const {
     return m_resourceManager && m_resourceManager->isInitialized() &&
-        m_uiRenderer && m_commandHandler &&
-        m_volumePanel && m_languagePanel;
+        m_uiRenderer && m_commandHandler && m_volumePanel;
 }
 
 void SettingsScreen::handleInitializationError(const std::string& component) {

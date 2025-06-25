@@ -1,13 +1,9 @@
 #include "../../include/Commands/ExitGameCommand.h"
 #include <cstdlib> // for std::exit
 
-ExitGameCommand::ExitGameCommand() {
-    std::cout << "ExitGameCommand: Created" << std::endl;
-}
+ExitGameCommand::ExitGameCommand() {}
 
 void ExitGameCommand::execute() {
-    std::cout << "ExitGameCommand: Executing - Exiting game..." << std::endl;
-
     // Mark as executed before termination
     m_hasExecuted = true;
 
