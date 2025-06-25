@@ -32,9 +32,6 @@ void GameLoop::processFrame() {
 
     // Render frame
     renderGame();
-
-    // Maintain consistent frame timing
-    maintainFrameRate();
 }
 
 void GameLoop::updateGame(float deltaTime) {
@@ -83,9 +80,4 @@ float GameLoop::calculateDeltaTime() {
     }
 
     return deltaTime;
-}
-
-void GameLoop::maintainFrameRate() {
-    // Frame rate limiting is handled by WindowManager
-    // This method can be extended for additional timing logic if needed
 }

@@ -1,15 +1,13 @@
 #include "AppContext.h"
 #include "ScreenTypes.h"
 #include "../../include/Screens/LoadingScreen.h"
-#include <MenuSoundManager.h>
+#include "../Core/AudioManager.h"
 
 LoadingScreen::LoadingScreen() {
-    // Load background image using ResourceLoader
     try {
         m_backgroundTexture = AppContext::instance().getTexture("LoadingScreen.png");
         m_backgroundSprite.setTexture(m_backgroundTexture);
 
-        // Scale background to fit window
         sf::Vector2u textureSize = m_backgroundTexture.getSize();
         sf::Vector2f targetSize(1400.0f, 800.0f); // Window size
 
@@ -32,7 +30,7 @@ LoadingScreen::LoadingScreen() {
         m_backgroundSprite.setTexture(m_backgroundTexture);
         delete[] pixels;
     }
-    MenuSoundManager::instance().playMenuMusic("loading_music");
+    AudioManager::instance().playMusic("loading_music", true);
 }
 
 void LoadingScreen::handleEvents(sf::RenderWindow& window) {

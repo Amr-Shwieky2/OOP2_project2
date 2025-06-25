@@ -1,17 +1,4 @@
-#include "GameInitializer.h"
-#include "AppContext.h"
-#include "ScreenTypes.h"
-#include "../Core/AudioManager.h"
-#include "../Core/AudioSettingsManager.h"
-#include "../Core/MenuSoundManager.h"
-#include "Logger.h"
-
-// Screens
-#include "../Screens/LoadingScreen.h"
-#include "../Screens/MenuScreen.h"
-#include "../Screens/SettingsScreen.h"
-#include "../Screens/AboutScreen.h"
-#include "../Screens/HelpScreen.h"
+﻿#include "GameInitializer.h"
 
 void GameInitializer::initializeAllSystems() {
     Logger::log("Starting game systems initialization...");
@@ -39,9 +26,6 @@ void GameInitializer::initializeAudioSystem() {
             AudioManager::instance().setMusicVolume(settings.musicVolume);
             AudioManager::instance().setSFXVolume(settings.sfxVolume);
 
-            MenuSoundManager::instance().enable(settings.menuSoundsEnabled);
-            MenuSoundManager::instance().setVolume(settings.menuSoundVolume);
-
             Logger::log("Audio settings loaded successfully");
         }
         else {
@@ -61,20 +45,12 @@ void GameInitializer::initializeAudioSystem() {
 
 void GameInitializer::loadDefaultAudioFiles() {
     auto& audioManager = AudioManager::instance();
-    auto& menuSounds = MenuSoundManager::instance();
 
-    if (menuSounds.loadSounds()) {
-        Logger::log("Menu sounds loaded successfully");
+    if (audioManager.loadMusic("loading_music", "intro.wav")) {
+        Logger::log("Loading music loaded successfully");
     }
     else {
-        Logger::log("Warning: Could not load menu sounds", LogLevel::Warning);
-    }
-
-    if (audioManager.loadMusic("background_music", "background_music.ogg")) {
-        Logger::log("Background music loaded successfully");
-    }
-    else {
-        Logger::log("Warning: Could not load background music", LogLevel::Warning);
+        Logger::log("Warning: Could not load  music", LogLevel::Warning);
     }
 }
 
@@ -83,8 +59,6 @@ void GameInitializer::setDefaultAudioVolumes() {
     settings.masterVolume = AudioManager::instance().getMasterVolume();
     settings.musicVolume = AudioManager::instance().getMusicVolume();
     settings.sfxVolume = AudioManager::instance().getSFXVolume();
-    settings.menuSoundsEnabled = MenuSoundManager::instance().isEnabled();
-    settings.menuSoundVolume = MenuSoundManager::instance().getVolume();
 
     AudioSettingsManager::save(settings);
     Logger::log("Set default audio volumes");

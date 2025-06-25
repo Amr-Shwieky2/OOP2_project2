@@ -2,7 +2,7 @@
 #include <string>
 
 /**
- * @brief Application cleanup only - follows SRP
+ * @brief Application cleanup only 
  */
 class AppCleanupManager {
 public:

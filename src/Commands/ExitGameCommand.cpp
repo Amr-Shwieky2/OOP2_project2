@@ -8,9 +8,7 @@ void ExitGameCommand::execute() {
     m_hasExecuted = true;
 
     std::cout << "Goodbye!" << std::endl;
-
-    // Immediate termination with success code
-    std::exit(0);  // Note: This bypasses destructors
+    std::exit(0);  
 }
 
 void ExitGameCommand::undo() {

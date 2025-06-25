@@ -2,13 +2,10 @@
 #include "VolumeControlPanel.h"
 #include <iostream>
 
-SettingsEventHandler::SettingsEventHandler() : m_shouldExitToMenu(false) {
-    std::cout << "SettingsEventHandler created" << std::endl;
-}
+SettingsEventHandler::SettingsEventHandler() : m_shouldExitToMenu(false) {}
 
 SettingsEventHandler::~SettingsEventHandler() {
     cleanup();
-    std::cout << "SettingsEventHandler destroyed safely" << std::endl;
 }
 
 void SettingsEventHandler::cleanup() {
@@ -18,8 +15,6 @@ void SettingsEventHandler::cleanup() {
         if (m_volumePanel) {
             m_volumePanel.reset();
         }
-
-        std::cout << "SettingsEventHandler cleanup completed" << std::endl;
     }
     catch (const std::exception& e) {
         std::cout << "Error during cleanup: " << e.what() << std::endl;
@@ -29,7 +24,6 @@ void SettingsEventHandler::cleanup() {
 void SettingsEventHandler::setVolumePanel(std::shared_ptr<VolumeControlPanel> panel) {
     if (panel) {
         m_volumePanel = panel;
-        std::cout << "Volume panel registered with event handler" << std::endl;
     }
 }
 

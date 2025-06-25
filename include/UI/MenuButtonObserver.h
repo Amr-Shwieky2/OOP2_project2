@@ -8,7 +8,6 @@
 #include <iostream>
 #include <memory>
 
-// Observer للأزرار مع Command Pattern
 class MenuButtonObserver : public IButtonObserver {
 public:
     MenuButtonObserver();
@@ -18,16 +17,14 @@ public:
     void onButtonClicked(const std::string& buttonId) override;
     void onButtonHovered(const std::string& buttonId) override;
 
-    // إدارة الأوامر
     CommandInvoker& getCommandInvoker() { return m_commandInvoker; }
 
-    // دوال مساعدة للـ Undo/Redo (للاستخدام المستقبلي)
     bool undoLastAction();
     bool redoLastAction();
     void printCommandHistory();
 
 private:
-    CommandInvoker m_commandInvoker;  // مدير الأوامر
+    CommandInvoker m_commandInvoker; 
 
     // Command Pattern handlers
     void handleStartButton();
@@ -36,6 +33,5 @@ private:
     void handleAboutButton();
     void handleExitButton();
 
-    // دالة مساعدة لتحديد الشاشة الحالية
     ScreenType getCurrentScreen() const;
 };

@@ -4,7 +4,7 @@
 class WindowManager;
 
 /**
- * @brief Main game loop only - follows SRP
+ * @brief Main game loop only 
  */
 class GameLoop {
 public:
@@ -22,7 +22,6 @@ private:
 
     // Frame timing
     float calculateDeltaTime();
-    void maintainFrameRate();
 
     WindowManager& m_windowManager;
     sf::Clock m_clock;

@@ -98,8 +98,6 @@ void AppCleanupManager::handleCleanupError(const std::string& operation, const s
     Logger::log("Error during " + operation + ": " + e.what(), LogLevel::Warning);
     logCleanupOperation(operation, false);
 
-    // Continue cleanup even if one operation fails
-    // Cleanup should be as robust as possible
 }
 
 void AppCleanupManager::logCleanupOperation(const std::string& operation, bool success) {
