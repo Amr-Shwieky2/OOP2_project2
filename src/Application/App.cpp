@@ -1,142 +1,88 @@
 ﻿#include "App.h"
-#include "AppContext.h"
-#include "ScreenTypes.h"
-#include "Logger.h"
-#include "AudioManager.h"
+#include <Logger.h>
 
-// Include screen files
-#include "../Screens/LoadingScreen.h"
-#include "../Screens/MenuScreen.h"
-#include "../Screens/SettingsScreen.h"
-#include "../Screens/AboutScreen.h"
-#include "../../include/Screens/HelpScreen.h"
+App::App()
+    : m_windowManager(std::make_unique<WindowManager>())
+    , m_initializer(std::make_unique<GameInitializer>())
+    , m_cleanupManager(std::make_unique<AppCleanupManager>()) {
 
-#include<fstream>
+    // GameLoop needs WindowManager, so create it after WindowManager
+    // This will be done in initialize() after window is created
 
-App::App() {
-    // Create window
-    m_window = std::make_unique<sf::RenderWindow>(
-        sf::VideoMode(1400, 800), "Desert Ball"
-    );
-    m_window->setFramerateLimit(60);
+    Logger::log("App created with SRP components");
 }
 
 void App::run() {
     Logger::log("Starting Desert Ball game...");
-    initialize();
-    mainLoop();
-    cleanup();
+
+    try {
+        initialize();
+
+        // Create game loop after initialization
+        m_gameLoop = std::make_unique<GameLoop>(*m_windowManager);
+
+        // Run the main game loop
+        m_gameLoop->run();
+
+        cleanup();
+    }
+    catch (const std::exception& e) {
+        handleApplicationError(e);
+    }
+
     Logger::log("Game ended.");
 }
 
 void App::initialize() {
-    // Initialize audio system
-    initializeAudioSystem();
+    Logger::log("Initializing application...");
 
-    auto& screenManager = AppContext::instance().screenManager();
+    // Step 1: Create and setup window
+    m_windowManager->createWindow(1400, 800, "Desert Ball");
+    m_windowManager->setFramerateLimit(60);
+    m_windowManager->setVerticalSyncEnabled(false);
 
-    // Register all screens
-    screenManager.registerScreen(ScreenType::LOADING, []() {
-        return std::make_unique<LoadingScreen>();
-        });
+    // Step 2: Initialize all game systems
+    m_initializer->initializeAllSystems();
 
-    screenManager.registerScreen(ScreenType::MENU, []() {
-        return std::make_unique<MenuScreen>();
-        });
-
-    screenManager.registerScreen(ScreenType::SETTINGS, []() {
-        return std::make_unique<SettingsScreen>();
-        });
-
-    screenManager.registerScreen(ScreenType::HELP, []() {
-        return std::make_unique<HelpScreen>();
-        });
-
-    screenManager.registerScreen(ScreenType::ABOUT_US, []() {
-        return std::make_unique<AboutScreen>();
-        });
-
-    // Start with loading screen
-    screenManager.changeScreen(ScreenType::LOADING);
-    Logger::log("All screens initialized");
-}
-
-void App::initializeAudioSystem() {
-    try {
-        Logger::log("Initializing audio system...");
-
-        auto& audioManager = AudioManager::instance();
-
-        // Load audio settings first
-        audioManager.loadSettings();
-
-        // Load menu sounds (will be used across multiple screens)
-        if (audioManager.loadMenuSounds()) {
-            Logger::log("Menu sounds loaded successfully");
-        }
-        else {
-            Logger::log("Warning: Could not load menu sounds", LogLevel::Warning);
-        }
-
-        // Load background music if needed
-        if (audioManager.loadMusic("background_music", "background_music.ogg")) {
-            Logger::log("Background music loaded successfully");
-        }
-        else {
-            Logger::log("Warning: Could not load background music", LogLevel::Warning);
-        }
-
-        // Set default volumes if not loaded from settings
-        if (audioManager.getMasterVolume() == 0) {
-            audioManager.setMasterVolume(80.0f);
-            audioManager.setSFXVolume(70.0f);
-            audioManager.setMusicVolume(60.0f);
-            Logger::log("Set default audio volumes");
-        }
-
-        Logger::log("Audio system initialized successfully");
-
-    }
-    catch (const std::exception& e) {
-        Logger::log("Error initializing audio system: " + std::string(e.what()), LogLevel::Error);
-        Logger::log("Game will continue without audio", LogLevel::Warning);
-    }
-}
-
-void App::mainLoop() {
-    sf::Clock clock;
-    auto& screenManager = AppContext::instance().screenManager();
-
-    while (m_window->isOpen()) {
-        float deltaTime = clock.restart().asSeconds();
-
-        // Handle events
-        screenManager.handleEvents(*m_window);
-
-        // Update game
-        screenManager.update(deltaTime);
-
-        // Draw everything
-        m_window->clear(sf::Color::Black);
-        screenManager.render(*m_window);
-        m_window->display();
-    }
+    Logger::log("Application initialization completed");
 }
 
 void App::cleanup() {
+    Logger::log("Cleaning up application...");
+
+    // Cleanup in reverse order of creation
     try {
-        Logger::log("Cleaning up application...");
+        // Stop game loop first
+        m_gameLoop.reset();
 
-        // Stop all audio
-        AudioManager::instance().stopAllSounds();
-        AudioManager::instance().stopMusic();
+        // Perform cleanup operations
+        m_cleanupManager->performCleanup();
 
-        // Save any pending settings
-        AudioManager::instance().saveSettings();
+        // Close window last
+        if (m_windowManager) {
+            m_windowManager->closeWindow();
+        }
 
-        Logger::log("Application cleanup completed");
+        Logger::log("Application cleanup completed successfully");
     }
     catch (const std::exception& e) {
         Logger::log("Error during cleanup: " + std::string(e.what()), LogLevel::Warning);
+        // Continue with cleanup - don't let cleanup errors crash the app
     }
+}
+
+void App::handleApplicationError(const std::exception& e) {
+    Logger::log("Critical application error: " + std::string(e.what()), LogLevel::Error);
+
+    // Attempt emergency cleanup
+    try {
+        if (m_cleanupManager) {
+            m_cleanupManager->performCleanup();
+        }
+    }
+    catch (...) {
+        Logger::log("Emergency cleanup failed", LogLevel::Error);
+    }
+
+    Logger::log("Application terminated due to error");
 }
