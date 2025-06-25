@@ -2,14 +2,11 @@
 #include <iostream>
 #include "../Settings/SettingsAutoSaveManager.h"
 
-SettingsAutoSaveManager::SettingsAutoSaveManager() {
-    std::cout << "SettingsAutoSaveManager: Initialized for auto-save functionality only" << std::endl;
-}
+SettingsAutoSaveManager::SettingsAutoSaveManager() {}
 
 void SettingsAutoSaveManager::setVolumePanel(std::shared_ptr<VolumeControlPanel> panel) {
     if (panel) {
         m_volumePanel = panel;
-        std::cout << "SettingsAutoSaveManager: Volume panel registered for auto-save" << std::endl;
     }
     else {
         std::cout << "SettingsAutoSaveManager: Warning - Null volume panel provided" << std::endl;
@@ -18,11 +15,8 @@ void SettingsAutoSaveManager::setVolumePanel(std::shared_ptr<VolumeControlPanel>
 
 void SettingsAutoSaveManager::saveSettingsBeforeExit() {
     if (!m_autoSaveEnabled) {
-        std::cout << "SettingsAutoSaveManager: Auto-save disabled, skipping save" << std::endl;
         return;
     }
-
-    std::cout << "SettingsAutoSaveManager: Saving settings before exit..." << std::endl;
 
     bool volumeSaved = false;
 
@@ -41,16 +35,12 @@ void SettingsAutoSaveManager::saveSettingsBeforeExit() {
     catch (const std::exception& e) {
         handleSaveError("Settings", e);
     }
-
-    std::cout << "SettingsAutoSaveManager: Save operation completed" << std::endl;
 }
 
 void SettingsAutoSaveManager::performAutoSave() {
     if (!m_autoSaveEnabled) {
         return;
     }
-
-    std::cout << "SettingsAutoSaveManager: Performing auto-save..." << std::endl;
 
     try {
         saveSettingsBeforeExit();
@@ -64,8 +54,6 @@ void SettingsAutoSaveManager::performAutoSave() {
 }
 
 void SettingsAutoSaveManager::forceSaveAllSettings() {
-    std::cout << "SettingsAutoSaveManager: Force saving all settings..." << std::endl;
-
     try {
         // Force save regardless of auto-save setting
         bool originalAutoSave = m_autoSaveEnabled;
@@ -74,9 +62,6 @@ void SettingsAutoSaveManager::forceSaveAllSettings() {
         saveSettingsBeforeExit();
 
         m_autoSaveEnabled = originalAutoSave;
-
-        std::cout << "SettingsAutoSaveManager: Force save completed successfully" << std::endl;
-
     }
     catch (const std::exception& e) {
         handleSaveError("Force save", e);
@@ -111,12 +96,10 @@ bool SettingsAutoSaveManager::saveVolumeSettings() {
     if (auto panel = m_volumePanel.lock()) {
         try {
             if (panel->hasChanged()) {
-                std::cout << "SettingsAutoSaveManager: Saving volume settings..." << std::endl;
                 panel->saveSettings();
                 return true;
             }
             else {
-                std::cout << "SettingsAutoSaveManager: Volume settings unchanged, skipping save" << std::endl;
                 return false;
             }
         }

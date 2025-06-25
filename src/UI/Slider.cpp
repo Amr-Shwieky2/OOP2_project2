@@ -21,9 +21,13 @@ Slider::Slider(sf::Vector2f position, sf::Vector2f size, float minValue, float m
 }
 
 void Slider::setValue(float value) {
-    m_value = std::max(m_minValue, std::min(m_maxValue, value));
+    m_value = std::clamp(value, m_minValue, m_maxValue);
     updateVisuals();
+    if (m_onValueChanged) {
+        m_onValueChanged(m_value);
+    }
 }
+
 
 bool Slider::handleMouseMove(sf::Vector2f mousePos) {
     sf::FloatRect bounds(m_position.x, m_position.y - 10, m_size.x, m_size.y + 20);

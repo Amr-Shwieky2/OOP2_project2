@@ -18,7 +18,6 @@ SettingsScreen::SettingsScreen() {
         m_volumePanel = init.volumePanel;
 
         m_isInitialized = true;
-        std::cout << "SettingsScreen initialized successfully" << std::endl;
 
     }
     catch (const std::exception& e) {
@@ -43,7 +42,6 @@ void SettingsScreen::handleEvents(sf::RenderWindow& window) {
         if (event.type == sf::Event::KeyPressed && m_commandHandler) {
             bool shouldExit = m_commandHandler->handleKeyboardInput(event);
             if (shouldExit) {
-                std::cout << "SettingsScreen: Exiting to menu screen" << std::endl;
                 AppContext::instance().screenManager().changeScreen(ScreenType::MENU);
                 return;
             }

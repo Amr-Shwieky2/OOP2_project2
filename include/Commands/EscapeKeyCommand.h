@@ -3,10 +3,6 @@
 #include "../Config/ScreenTypes.h"  
 #include <string>  
 
-/**  
-* @brief Command لمعالجة مفتاح ESC مع دعم الـ Undo  
-* يحفظ الشاشة الحالية ويذهب للهدف (عادة MENU)  
-*/  
 class EscapeKeyCommand : public ICommand {  
 public:  
    // Constructor  
@@ -19,9 +15,9 @@ public:
    std::string getName() const override;  
 
 private:  
-   ScreenType m_currentScreen;     // الشاشة التي نخرج منها  
-   ScreenType m_targetScreen;      // الشاشة المستهدفة (عادة MENU)  
-   bool m_hasExecuted = false;     // هل تم تنفيذ الأمر  
+   ScreenType m_currentScreen;     
+   ScreenType m_targetScreen;      
+   bool m_hasExecuted = false;     
 
    // Helper function  
    std::string screenTypeToString(ScreenType screen) const;  

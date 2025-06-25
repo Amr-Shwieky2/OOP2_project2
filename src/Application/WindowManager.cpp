@@ -2,9 +2,7 @@
 #include "Logger.h"
 #include <stdexcept>
 
-WindowManager::WindowManager() {
-    // Window will be created when createWindow() is called
-}
+WindowManager::WindowManager() {}
 
 void WindowManager::createWindow(unsigned int width, unsigned int height, const std::string& title) {
     m_width = width;

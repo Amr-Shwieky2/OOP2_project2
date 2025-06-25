@@ -1,9 +1,4 @@
 ﻿#include "../../include/Commands/SettingsCommandHandler.h"
-#include "../Settings/SettingsInputHandler.h"
-#include "../Settings/SettingsCommandExecutor.h"
-#include "../Settings/SettingsAutoSaveManager.h"
-#include "../Settings/SettingsEventLogger.h"
-#include "../UI/VolumeControlPanel.h"
 #include <iostream>
 
 SettingsCommandHandler::SettingsCommandHandler() : m_isDestroying(false) {

@@ -1,5 +1,17 @@
 #pragma once
 #include <string>
+#include "AppContext.h"
+#include "ScreenTypes.h"
+#include "../Core/AudioManager.h"
+#include "../Core/AudioSettingsManager.h"
+#include "Logger.h"
+
+// Screens
+#include "../Screens/LoadingScreen.h"
+#include "../Screens/MenuScreen.h"
+#include "../Screens/SettingsScreen.h"
+#include "../Screens/AboutScreen.h"
+#include "../Screens/HelpScreen.h"
 
 class GameInitializer {
 public:

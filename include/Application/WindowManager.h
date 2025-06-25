@@ -4,7 +4,7 @@
 #include <string>
 
 /**
- * @brief Window management only - follows SRP
+ * @brief Window management only 
  */
 class WindowManager {
 public:

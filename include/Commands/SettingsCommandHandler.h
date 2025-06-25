@@ -1,13 +1,11 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <memory>
-
-// Forward declarations
-class SettingsInputHandler;
-class SettingsCommandExecutor;
-class SettingsAutoSaveManager;
-class SettingsEventLogger;
-class VolumeControlPanel;
+#include "../Settings/SettingsInputHandler.h"
+#include "../Settings/SettingsCommandExecutor.h"
+#include "../Settings/SettingsAutoSaveManager.h"
+#include "../Settings/SettingsEventLogger.h"
+#include "../UI/VolumeControlPanel.h"
 
 /**
  * @brief Safe Settings Command Handler - Uses polling instead of callbacks

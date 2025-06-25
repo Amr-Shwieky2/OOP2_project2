@@ -21,7 +21,6 @@ AboutScreen::AboutScreen() {
     }
     catch (...) {
         std::cout << "Error: Could not load AboutScreen.png!" << std::endl;
-        std::cout << "Make sure AboutScreen.png is in the resources folder" << std::endl;
     }
 }
 
@@ -34,7 +33,6 @@ void AboutScreen::handleEvents(sf::RenderWindow& window) {
 
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Escape) {
-                std::cout << "About screen: ESC pressed, returning to menu" << std::endl;
                 AppContext::instance().screenManager().changeScreen(ScreenType::MENU);
             }
         }

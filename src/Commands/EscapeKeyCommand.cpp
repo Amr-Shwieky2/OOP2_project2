@@ -26,7 +26,6 @@ void EscapeKeyCommand::undo() {
     }
 
     try {
-        // العودة للشاشة السابقة
         AppContext::instance().screenManager().changeScreen(m_currentScreen);
     }
     catch (const std::exception& e) {
@@ -35,7 +34,6 @@ void EscapeKeyCommand::undo() {
 }
 
 bool EscapeKeyCommand::canUndo() const {
-    // يمكن التراجع إذا تم التنفيذ والشاشات مختلفة
     return m_hasExecuted && (m_currentScreen != m_targetScreen);
 }
 

@@ -2,14 +2,10 @@
 #include "../Application/AppContext.h"
 #include <iostream>
 
-SettingsCommandExecutor::SettingsCommandExecutor() {
-    std::cout << "SettingsCommandExecutor: Initialized for command execution only" << std::endl;
-}
+SettingsCommandExecutor::SettingsCommandExecutor() {}
 
 void SettingsCommandExecutor::executeEscapeCommand() {
     try {
-        std::cout << "SettingsCommandExecutor: Creating and executing Escape command" << std::endl;
-
         auto escapeCommand = createEscapeCommand();
         executeCommandSafely(std::move(escapeCommand));
 
@@ -65,17 +61,7 @@ bool SettingsCommandExecutor::executeRedo() {
 
 void SettingsCommandExecutor::executeHistoryCommand() {
     try {
-        std::cout << "SettingsCommandExecutor: Displaying command history" << std::endl;
-        std::cout << "\n" << std::string(50, '=') << std::endl;
-        std::cout << "    SETTINGS SCREEN - COMMAND HISTORY" << std::endl;
-        std::cout << std::string(50, '=') << std::endl;
-
         AppContext::instance().commandInvoker().printHistory();
-
-        std::cout << std::string(50, '=') << std::endl;
-        std::cout << "    END OF COMMAND HISTORY" << std::endl;
-        std::cout << std::string(50, '=') << "\n" << std::endl;
-
     }
     catch (const std::exception& e) {
         handleCommandError("HistoryCommand", e);
@@ -84,7 +70,6 @@ void SettingsCommandExecutor::executeHistoryCommand() {
 
 void SettingsCommandExecutor::clearCommandHistory() {
     try {
-        std::cout << "SettingsCommandExecutor: Clearing command history" << std::endl;
         AppContext::instance().commandInvoker().clearHistory();
 
     }
@@ -115,12 +100,10 @@ bool SettingsCommandExecutor::canRedo() const {
 
 void SettingsCommandExecutor::executeCommandSafely(std::unique_ptr<ICommand> command) {
     if (!command) {
-        std::cout << "SettingsCommandExecutor: Warning - Null command provided" << std::endl;
         return;
     }
 
     try {
-        std::cout << "SettingsCommandExecutor: Executing command: " << command->getName() << std::endl;
         AppContext::instance().commandInvoker().execute(std::move(command));
 
     }

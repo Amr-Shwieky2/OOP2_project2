@@ -40,8 +40,6 @@ MenuScreen::MenuScreen() {
 }
 
 void MenuScreen::setupButtons() {
-    std::cout << "Setting up buttons with Factory Pattern..." << std::endl;
-
     // Create observer for button events
     m_buttonObserver = std::make_shared<MenuButtonObserver>();
 
@@ -59,9 +57,6 @@ void MenuScreen::setupButtons() {
 
     // Clear existing buttons
     m_observableButtons.clear();
-
-    // Create buttons using Factory Pattern for consistency
-    std::cout << "Creating buttons using Factory Pattern..." << std::endl;
 
     // About Us button
     auto aboutBtn = ButtonFactory::createAboutButton(
@@ -107,8 +102,6 @@ void MenuScreen::setupButtons() {
         m_font
     );
     m_observableButtons.push_back(std::move(exitBtn));
-
-    std::cout << "Created " << m_observableButtons.size() << " buttons using Factory Pattern!" << std::endl;
 }
 
 void MenuScreen::handleEvents(sf::RenderWindow& window) {

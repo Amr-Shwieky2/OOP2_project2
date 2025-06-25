@@ -8,7 +8,6 @@ MenuButtonObserver::MenuButtonObserver() {
 void MenuButtonObserver::onButtonClicked(const std::string& buttonId) {
     std::cout << "MenuButtonObserver: Button '" << buttonId << "' clicked!" << std::endl;
 
-    // توجيه الأمر حسب نوع الزر
     if (buttonId == "start") {
         handleStartButton();
     }
@@ -31,10 +30,7 @@ void MenuButtonObserver::onButtonClicked(const std::string& buttonId) {
 
 void MenuButtonObserver::onButtonHovered(const std::string& buttonId) {
     std::cout << "MenuButtonObserver: Button '" << buttonId << "' hovered" << std::endl;
-    // يمكن إضافة تأثيرات صوتية أو بصرية هنا
 }
-
-// Command Pattern Handlers
 
 void MenuButtonObserver::handleStartButton() {
     std::cout << "MenuButtonObserver: Handling Start Game..." << std::endl;
@@ -75,8 +71,6 @@ void MenuButtonObserver::handleExitButton() {
     m_commandInvoker.execute(std::move(command));
 }
 
-// Command Management
-
 bool MenuButtonObserver::undoLastAction() {
     std::cout << "MenuButtonObserver: Attempting to undo last action..." << std::endl;
     return m_commandInvoker.undo();
@@ -88,12 +82,9 @@ bool MenuButtonObserver::redoLastAction() {
 }
 
 void MenuButtonObserver::printCommandHistory() {
-    std::cout << "MenuButtonObserver: Printing command history..." << std::endl;
     m_commandInvoker.printHistory();
 }
 
 ScreenType MenuButtonObserver::getCurrentScreen() const {
-    // للآن نفترض أننا في MENU، يمكن تحسين هذا لاحقاً
-    // بقراءة الشاشة الحالية من ScreenManager
     return ScreenType::MENU;
 }

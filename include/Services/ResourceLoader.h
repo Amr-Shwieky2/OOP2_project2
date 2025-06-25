@@ -61,10 +61,6 @@ private:
     bool loadResource(ResourceType& resource, const std::string& filename);
 };
 
-// ===============================
-// Template Specializations
-// ===============================
-
 template<>
 inline bool ResourceLoader<sf::Texture>::loadResource(sf::Texture& texture, const std::string& filename) {
     return texture.loadFromFile(filename);
