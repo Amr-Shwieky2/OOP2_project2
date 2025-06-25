@@ -20,6 +20,7 @@
 #include "ResourceLoader.h"  // Template version
 #include "ScreenManager.h"
 #include <CommandInvoker.h>
+#include <AudioSettingsManager.h>
 
 class AppContext {
 public:
@@ -47,10 +48,13 @@ public:
         return sounds().getResource(filename);
     }
 
+    AudioSettings& audioSettings() { return m_audioSettings; }
+
 private:
     AppContext();
     AppContext(const AppContext&) = delete;
     AppContext& operator=(const AppContext&) = delete;
+    AudioSettings m_audioSettings;
 
     // Template-based resource loaders
     std::unique_ptr<TextureLoader> m_textureLoader;

@@ -1,4 +1,3 @@
-// File: src/Core/ScreenManager.cpp
 #include "ScreenManager.h"
 
 void ScreenManager::registerScreen(ScreenType type, std::function<std::unique_ptr<IScreen>()> creator) {

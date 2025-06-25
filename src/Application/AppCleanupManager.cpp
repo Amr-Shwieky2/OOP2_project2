@@ -2,6 +2,7 @@
 #include "AudioManager.h"
 #include "AppContext.h"
 #include "Logger.h"
+#include <AudioSettingsManager.h>
 
 void AppCleanupManager::performCleanup() {
     Logger::log("Starting application cleanup...");
@@ -36,14 +37,15 @@ void AppCleanupManager::saveUserSettings() {
     try {
         Logger::log("Saving user settings...");
 
-        // Save audio settings
+        // Save audio settings from AudioManager to file
         auto& audioManager = AudioManager::instance();
-        audioManager.saveSettings();
 
-        // Future: Save other user preferences here
-        // - Graphics settings
-        // - Control mappings
-        // - Language preferences
+        AudioSettings settings;
+        settings.masterVolume = audioManager.getMasterVolume();
+        settings.musicVolume = audioManager.getMusicVolume();
+        settings.sfxVolume = audioManager.getSFXVolume();
+
+        AudioSettingsManager::save(settings);
 
         logCleanupOperation("User settings save", true);
     }

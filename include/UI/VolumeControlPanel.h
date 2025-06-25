@@ -1,77 +1,58 @@
 #pragma once
+
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <string>
+#include <unordered_map>
+#include "Slider.h"
+#include "AudioManager.h"
+#include "AudioSettingsManager.h"
 
-// Forward declarations
-class Slider;
-
-/**
- * Volume Control Panel - handles only volume-related UI and logic
- * Single Responsibility: Volume management
- */
 class VolumeControlPanel {
 public:
-    explicit VolumeControlPanel(const sf::Font& font);
-    ~VolumeControlPanel() ;
+    VolumeControlPanel(const sf::Font& font, AudioManager& audioManager, AudioSettings& settings);
+    ~VolumeControlPanel();
 
-    // Core functionality
     void update(float deltaTime);
     void render(sf::RenderWindow& window);
     bool handleMouseEvent(const sf::Event& event);
-
-    // Volume management
     void refreshFromAudioManager();
     void saveSettings();
-
-    // State queries
     bool hasChanged() const { return m_hasChanged; }
-    void markSaved() { m_hasChanged = false; }
-
-    // Layout configuration
-    void setPosition(sf::Vector2f position) { m_position = position; }
-    void setSpacing(float spacing) { m_spacing = spacing; }
 
 private:
-    // Single volume slider component
     struct VolumeSlider {
+        std::string type;
         sf::Text label;
-        std::unique_ptr<Slider> slider;
         sf::Text value;
-        std::string type; // "master", "music", "sfx"
+        std::unique_ptr<Slider> slider;
 
-        VolumeSlider(const std::string& labelText, const std::string& sliderType,
-            const sf::Font& font, sf::Vector2f position);
+        VolumeSlider(const std::string& labelText,
+            const std::string& sliderType,
+            const sf::Font& font,
+            sf::Vector2f position);
 
         void updateValueText();
         void setVolume(float volume);
         float getVolume() const;
     };
 
-    // Volume sliders
+    sf::Vector2f m_position;
+    float m_spacing = 100.0f;
+    bool m_hasChanged = false;
+
+    AudioManager& m_audioManager;
+    AudioSettings& m_audioSettings;
+
     std::unique_ptr<VolumeSlider> m_masterVolume;
     std::unique_ptr<VolumeSlider> m_musicVolume;
     std::unique_ptr<VolumeSlider> m_sfxVolume;
 
-    // Panel properties
-    sf::Vector2f m_position;
-    float m_spacing = 90.0f;
-    bool m_hasChanged = false;
-
-    // Visual styling
-    sf::Color m_labelColor = sf::Color(160, 82, 45);  // Saddle Brown
-    sf::Color m_valueColor = sf::Color(139, 69, 19);  // Dark Brown
-
-    // Setup methods - each with single purpose
+    sf::Vector2f calculateSliderPosition(int index) const;
     void setupMasterVolumeSlider(const sf::Font& font);
     void setupMusicVolumeSlider(const sf::Font& font);
     void setupSFXVolumeSlider(const sf::Font& font);
-
-    // Event handling
-    void onVolumeChanged(const std::string& type, float value);
-
-    // Helper methods
-    sf::Vector2f calculateSliderPosition(int index) const;
     void updateAllValueTexts();
+    void onVolumeChanged(const std::string& type, float value);
     void applyVolumeToAudioManager(const std::string& type, float value);
 };
