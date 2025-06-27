@@ -6,8 +6,10 @@
     ]
   },
   "ExpandedNodes": [
-    ""
+    "",
+    "\\include",
+    "\\src"
   ],
-  "SelectedNode": "\\C:\\Users\\marwa\\Source\\Repos\\OOP2_project2",
+  "SelectedNode": "\\include\\Settings",
   "PreviewInSolutionExplorer": false
 }
