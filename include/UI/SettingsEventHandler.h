@@ -17,10 +17,6 @@ public:
     // Event handling 
     void handleEvents(sf::RenderWindow& window);
 
-    // State queries 
-    bool shouldExitToMenu() const;
-    void resetExitFlag();
-
     // Safe cleanup 
     void cleanup();
 
@@ -38,7 +34,6 @@ private:
 
     // Key processing 
     void processEscapeKey();
-    void processEnterKey();
 
     // Mouse event delegation
     bool delegateMouseEventToComponents(const sf::Event& event);
@@ -50,7 +45,6 @@ private:
 private:
     // Components 
     std::shared_ptr<VolumeControlPanel> m_volumePanel;
-    std::shared_ptr<LanguageControlPanel> m_languagePanel;
 
     // State 
     bool m_shouldExitToMenu = false;

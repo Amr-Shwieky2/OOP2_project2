@@ -35,9 +35,9 @@ private:
     bool m_isDragging = false;
     bool m_isHovered = false;
 
-    sf::Color m_backgroundColor = sf::Color(139, 117, 83);         // Medium Brown للخلفية
-    sf::Color m_fillColor = sf::Color(139, 69, 19);                // Dark Brown للشريط الممتلئ
-    sf::Color m_handleColor = sf::Color(210, 180, 140);            // Tan للمقبض
+    sf::Color m_backgroundColor = sf::Color(139, 117, 83);         // Medium Brown 
+    sf::Color m_fillColor = sf::Color(139, 69, 19);                // Dark Brown 
+    sf::Color m_handleColor = sf::Color(210, 180, 140);            // Tan 
 
     std::function<void(float)> m_onValueChanged;
 

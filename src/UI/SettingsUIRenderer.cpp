@@ -15,7 +15,7 @@ void SettingsUIRenderer::initializeTexts() {
 
     // Setup instruction text  
     setupTextProperties(m_backInstructionText,
-        "Press ESC to go back",  // نص ثابت
+        "Press ESC to go back",  
         m_config.instructionSize,
         m_config.instructionColor);
     m_backInstructionText.setPosition(570, 550);
