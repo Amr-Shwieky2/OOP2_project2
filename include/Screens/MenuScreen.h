@@ -1,44 +1,46 @@
 #pragma once
-
 #include "../Core/IScreen.h"
-#include "../UI/ObservableButton.h"
-#include "../UI/MenuButtonObserver.h"
-#include "../UI/Button.h"
-#include "../UI/ButtonFactory.h"
+#include "../UI/MenuButtonManager.h"
+#include "../UI/MenuAnimationController.h" 
+#include "../UI/MenuEventHandler.h"
+#include "../UI/MenuRenderer.h"
 #include <SFML/Graphics.hpp>
-#include <vector>
-#include <Button.h>
+#include <memory>
 
+/**
+ * @brief Refactored MenuScreen following Single Responsibility Principle
+ * Single Responsibility: Screen lifecycle coordination only
+ */
 class MenuScreen : public IScreen {
 public:
     MenuScreen();
     ~MenuScreen() = default;
 
-    // IScreen interface implementation
+    // IScreen interface implementation - delegates to specialized components
     void handleEvents(sf::RenderWindow& window) override;
     void update(float deltaTime) override;
     void render(sf::RenderWindow& window) override;
 
+    // Screen lifecycle
+    void onEnter();
+    void onExit();
+
+    // Configuration
+    void setAnimationSpeed(float speed);
+    void enableAnimations(bool enable);
+
 private:
-    // Font for text rendering
-    sf::Font m_font;
-    sf::Text m_titleText;
+    std::unique_ptr<MenuButtonManager> m_buttonManager;        // Button management
+    std::unique_ptr<MenuAnimationController> m_animator;       // Animations
+    std::unique_ptr<MenuEventHandler> m_eventHandler;          // Event processing
+    std::unique_ptr<MenuRenderer> m_renderer;                  // Rendering
 
-    // Background image
-    sf::Texture m_backgroundTexture;
-    sf::Sprite m_backgroundSprite;
+    bool m_isInitialized = false;
 
-    // UI Elements - Buttons
-    std::vector<Button> m_buttons;
+    // Initialization
+    bool initializeComponents();
+    void handleInitializationError(const std::string& component, const std::string& error);
 
-    // Animation and effects
-    float m_animationTime = 0.0f;
-
-    std::vector<std::unique_ptr<ObservableButton>> m_observableButtons;
-    std::shared_ptr<MenuButtonObserver> m_buttonObserver;
-
-    // Private helper methods
-    void setupButtons();
-    void updateSelection(int direction);
-    void selectCurrentButton();
+    // Component validation
+    bool areComponentsValid() const;
 };
