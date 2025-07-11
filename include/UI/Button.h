@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include <functional>
 #include "ButtonModel.h"
@@ -19,15 +19,16 @@ public:
     void setCallback(std::function<void()> callback);
 
     void handleMouseMove(const sf::Vector2f& mousePos);
-    bool handleClick(const sf::Vector2f& mousePos);
+    bool handleClick(const sf::Vector2f& mousePos);  
     void update(float deltaTime);
     void render(sf::RenderWindow& window);
+
     bool isMouseOver(const sf::Vector2f& mousePos) const {
         return m_model.getBounds().contains(mousePos);
     }
 
     void setButtonImage(const sf::Texture* texture);
-    void setBackgroundColor(const sf::Color& color);
+    void setBackgroundColor(const sf::Color& color);  
     void setTextColor(const sf::Color& color);
 
 private:
