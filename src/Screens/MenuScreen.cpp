@@ -1,6 +1,7 @@
 ﻿#include "../../include/Screens/MenuScreen.h"
 #include <iostream>
 #include <AppContext.h>
+#include "GameExceptions.h"
 
 MenuScreen::MenuScreen() {
     std::cout << "MenuScreen: Creating with SRP-compliant architecture..." << std::endl;
@@ -25,7 +26,7 @@ bool MenuScreen::initializeComponents() {
 
         // Initialize components
         if (!m_renderer->initializeResources()) {
-            throw std::runtime_error("Failed to initialize renderer resources");
+            THROW_INITIALIZATION_EXCEPTION("Failed to initialize renderer resources");
         }
 
         m_buttonManager->initializeButtons(m_renderer->hasValidResources() ?
