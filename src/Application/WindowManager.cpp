@@ -1,6 +1,7 @@
 #include "WindowManager.h"
 #include "Logger.h"
 #include <stdexcept>
+#include "GameExceptions.h"
 
 WindowManager::WindowManager() {}
 
@@ -73,21 +74,21 @@ void WindowManager::setTitle(const std::string& title) {
 
 sf::RenderWindow& WindowManager::getWindow() {
     if (!m_window) {
-        throw std::runtime_error("Window not created - call createWindow() first");
+        THROW_WINDOW_EXCEPTION("Window not created - call createWindow() first");
     }
     return *m_window;
 }
 
 const sf::RenderWindow& WindowManager::getWindow() const {
     if (!m_window) {
-        throw std::runtime_error("Window not created - call createWindow() first");
+        THROW_WINDOW_EXCEPTION("Window not created - call createWindow() first");
     }
     return *m_window;
 }
 
 void WindowManager::validateWindowSettings() const {
     if (m_width < 100 || m_height < 100) {
-        throw std::invalid_argument("Window size too small (minimum 100x100)");
+        THROW_WINDOW_EXCEPTION("Window size too small (minimum 100x100)");
     }
 
     if (m_width > 4096 || m_height > 4096) {
@@ -97,6 +98,6 @@ void WindowManager::validateWindowSettings() const {
     }
 
     if (m_title.empty()) {
-        throw std::invalid_argument("Window title cannot be empty");
+        THROW_WINDOW_EXCEPTION("Window title cannot be empty");
     }
 }
