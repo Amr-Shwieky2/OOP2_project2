@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <stdexcept>
+#include "GameExceptions.h"
 
 /**
  * @brief Template resource loader with caching
@@ -24,7 +25,7 @@ public:
 
         auto resource = std::make_unique<ResourceType>();
         if (!loadResource(*resource, filename)) {
-            throw std::runtime_error("Failed to load resource: " + filename);
+            THROW_RESOURCE_EXCEPTION("Failed to load resource: " + filename);
         }
 
         ResourceType& ref = *resource;

@@ -1,5 +1,6 @@
 #include "../../include/Settings/SettingsInitializer.h"
 #include <AppContext.h>
+#include "GameExceptions.h"
 
 SettingsInitializer::InitResult SettingsInitializer::initialize() {
     InitResult result;
@@ -8,7 +9,7 @@ SettingsInitializer::InitResult SettingsInitializer::initialize() {
         // Resource manager
         result.resourceManager = std::make_unique<SettingsResourceManager>();
         if (!result.resourceManager->initializeResources()) {
-            throw std::runtime_error("Failed to initialize SettingsResourceManager");
+            THROW_INITIALIZATION_EXCEPTION("Failed to initialize SettingsResourceManager");
         }
 
         // UI Renderer

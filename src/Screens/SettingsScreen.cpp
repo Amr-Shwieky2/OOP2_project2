@@ -3,13 +3,14 @@
 #include "../../include/Settings/SettingsInitializer.h"  
 
 #include <iostream>
+#include "GameExceptions.h"
 
 SettingsScreen::SettingsScreen() {
     try {
         SettingsInitializer::InitResult init = SettingsInitializer::initialize();
 
         if (!init.success) {
-            throw std::runtime_error(init.errorMessage);
+            THROW_INITIALIZATION_EXCEPTION(init.errorMessage);
         }
 
         m_resourceManager = std::move(init.resourceManager);
